@@ -20,6 +20,8 @@ require('dotenv/config');
 
 var _query = require('./common/query');
 
+var _sequelizeConnection = require('./common/sequelize-connection');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express2.default)();

@@ -3,6 +3,7 @@ import logger from 'morgan';
 import body from 'body-parser';
 import 'dotenv/config';
 import {fliterQuery} from './common/query';
+import {sequelize} from './common/sequelize-connection';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
     res.fail = (message, code = 500) => {return res.status(code).json(message); };
     //parse to next
     next();
+
 });
 
 app.get('/', (req, res) => {
