@@ -1,20 +1,26 @@
-import app from './app';
+'use strict';
+
+var _app = require('./app');
+
+var _app2 = _interopRequireDefault(_app);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const port = 3000;
 
 //if no route match => matched this route instead
-app.use((req, res, next) => {
+_app2.default.use((req, res, next) => {
     const error = new Error('Not found');
     error.status = 404;
     next(error);
 });
 //error handling middleware
 //always at the bottom of the code
-app.use((err, req, res, next) => {
+_app2.default.use((err, req, res, next) => {
     return res.status(err.status || 500).json(err);
 });
 
-
-app.listen(port, () => {
+_app2.default.listen(port, () => {
     console.log(`We are open port ${port} for our express app`);
 });
+//# sourceMappingURL=index.js.map

@@ -2,14 +2,35 @@
   "name": "khmer-song",
   "version": "1.0.0",
   "description": "something here....",
-  "scripts": {},
+  "scripts": {
+    "start": "nodemon"
+  },
   "author": "peter",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "nodemon": "^1.17.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.5",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^5.0.1",
+    "eslint-config-babel": "^7.0.2",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.49.3",
+    "prettier": "1.13.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lysuytry/khmer-song.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lysuytry/khmer-song/issues"
+  },
+  "homepage": "https://github.com/Lysuytry/khmer-song#readme"
 }
