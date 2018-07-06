@@ -1,4 +1,6 @@
 import {sequelize, Sequelize} from '../common/sequelize-connection';
+import Album from './album';
+import Category from './category';
 
 const Song = sequelize.define('songs', {
   id: { type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true},

@@ -1,4 +1,5 @@
 import {Sequelize, sequelize} from '../common/sequelize-connection';
+import Production from './production'
 
 const Album = sequelize.define('albums', {
   id: {type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey},

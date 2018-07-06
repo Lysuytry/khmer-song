@@ -1,4 +1,5 @@
 import {Sequelize, sequelize} from '../common/sequelize-connection';
+import User from './user';
 
 const Playlist = sequelize.define('Playists', {
   id: {type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true},
