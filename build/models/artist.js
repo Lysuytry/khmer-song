@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
+//import Song from './song';
+
 const Artist = _sequelizeConnection.sequelize.define('artists', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
   name: { type: _sequelizeConnection.Sequelize.STRING(100), allowNull: false },
@@ -15,6 +17,8 @@ const Artist = _sequelizeConnection.sequelize.define('artists', {
   createdBy: { type: _sequelizeConnection.Sequelize.STRING(50), defaultValue: 'admin' },
   updatedBy: { type: _sequelizeConnection.Sequelize.STRING(50), defaultValue: 'admin' }
 }, { timestamps: true });
+
+//Artist.belongsToMany(Song);
 
 exports.default = Artist;
 //# sourceMappingURL=artist.js.map

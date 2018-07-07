@@ -6,26 +6,19 @@ Object.defineProperty(exports, "__esModule", {
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
-var _playlist = require('./playlist');
+//import Playlist from './playlist';
+//import Song from './song';
 
-var _playlist2 = _interopRequireDefault(_playlist);
-
-var _song = require('./song');
-
-var _song2 = _interopRequireDefault(_song);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const PlaylistSong = _sequelizeConnection.sequelize.define('Playlists-Songs', {
+const PlaylistSong = _sequelizeConnection.sequelize.define('playlists-songs', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-  playlistId: { type: _sequelizeConnection.Sequelize.INTEGER, references: {
-      model: _playlist2.default,
+  playlistId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, references: {
+      model: 'playlists',
       key: 'id'
-    } },
-  songId: { type: _sequelizeConnection.Sequelize.INTEGER, references: {
-      model: _song2.default,
+    }, onDelete: 'CASCADE', onUpdate: 'CASCADE' },
+  songId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, references: {
+      model: 'songs',
       key: 'id'
-    } }
+    }, onDelete: 'CASCADE', onUpdate: 'CASCADE' }
 }, { timestamps: false });
 
 exports.default = PlaylistSong;

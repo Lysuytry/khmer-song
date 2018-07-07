@@ -6,6 +6,6 @@ const sequelize = new Sequelize(DBNAME, DBUSER, DBPASS, {
   dialect: DBTYPE
 });
 
-sequelize.sync();
+sequelize.sync({ force: true});
 
 export { Sequelize, sequelize};

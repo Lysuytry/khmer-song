@@ -1,13 +1,15 @@
-import express from 'express';
-import logger from 'morgan';
 import body from 'body-parser';
 import 'dotenv/config';
-import {fliterQuery} from './common/query';
-import {sequelize} from './common/sequelize-connection';
+import express from 'express';
+import logger from 'morgan';
 import admin from './api/private/admin';
+import publicApi from './api/public/public';
+import { fliterQuery } from './common/query';
 
 const app = express();
+
 const {ENDPOINT} = process.env;
+
 app.use(logger('dev'));
 app.use(body.json());
 app.use(body.urlencoded({ extended: false}));
@@ -26,5 +28,6 @@ app.use((req, res, next) => {
 });
 
 app.use(`${ENDPOINT}/admin`, admin);
+app.use(`${ENDPOINT}/`, publicApi);
 
 export default app;

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
-const Category = _sequelizeConnection.sequelize.define('Categories', {
+const Category = _sequelizeConnection.sequelize.define('categories', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
   name: { type: _sequelizeConnection.Sequelize.STRING(80), allowNull: false },
   status: { type: _sequelizeConnection.Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active' },

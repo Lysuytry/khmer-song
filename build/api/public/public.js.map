@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"public.js","sourcesContent":[]}
+{"version":3,"sources":["../../../src/api/public/public.js"],"names":["publicApi"],"mappings":";;;;;;AAAA;;AAEA,MAAMA,YAAY,sBAAlB;;kBAEeA,S","file":"public.js","sourcesContent":["import {Router} from 'express';\n\nconst publicApi = Router();\n\nexport default publicApi;\n"]}

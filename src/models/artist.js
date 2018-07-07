@@ -1,4 +1,5 @@
 import {Sequelize, sequelize} from '../common/sequelize-connection';
+//import Song from './song';
 
 const Artist = sequelize.define('artists', {
   id: {type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true},
@@ -9,5 +10,7 @@ const Artist = sequelize.define('artists', {
   createdBy: {type: Sequelize.STRING(50), defaultValue: 'admin'},
   updatedBy: {type: Sequelize.STRING(50), defaultValue: 'admin'}
 }, {timestamps: true});
+
+//Artist.belongsToMany(Song);
 
 export default Artist;

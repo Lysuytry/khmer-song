@@ -6,15 +6,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
-var _util = require('util');
+//import Playlist from './playlist';
 
 const User = _sequelizeConnection.sequelize.define('users', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-  username: { type: _sequelizeConnection.Sequelize.STRING(100), allowNull: false, validate: { isString: true } },
+  username: { type: _sequelizeConnection.Sequelize.STRING(100), allowNull: false, validate: { isAlpha: true } },
   password: { type: _sequelizeConnection.Sequelize.STRING(30), allowNull: false, validate: { isAlphanumeric: true } },
-  role: { type: _sequelizeConnection.Sequelize.STRING(20), validate: { isString: true }, defaultValue: 'guest' },
+  role: { type: _sequelizeConnection.Sequelize.STRING(20), defaultValue: 'guest' },
   status: { type: _sequelizeConnection.Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active' }
 }, { timestamps: true });
+
+//User.hasMany(Playlist);
 
 exports.default = User;
 //# sourceMappingURL=user.js.map

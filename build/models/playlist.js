@@ -6,22 +6,22 @@ Object.defineProperty(exports, "__esModule", {
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
-var _user = require('./user');
+//import User from './user';
+//import Song from './song';
 
-var _user2 = _interopRequireDefault(_user);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const Playlist = _sequelizeConnection.sequelize.define('Playists', {
+const Playlist = _sequelizeConnection.sequelize.define('playists', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
   name: { type: _sequelizeConnection.Sequelize.STRING(70), allowNull: false },
-  userId: { type: _sequelizeConnection.Sequelize.INTEGER, references: {
-      model: _user2.default,
+  userId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, references: {
+      model: 'users',
       key: 'id'
-    } },
+    }, onDelete: 'SET NULL', onUpdate: 'CASCADE' },
   createdBy: { type: _sequelizeConnection.Sequelize.STRING(50), defaultValue: 'admin' },
   updatedBy: { type: _sequelizeConnection.Sequelize.STRING(50), defaultValue: 'admin' }
 }, { timestamps: true });
+
+//Playlist.belongsToMany(User);
+//Playlist.belongsToMany(Song);
 
 exports.default = Playlist;
 //# sourceMappingURL=playlist.js.map
