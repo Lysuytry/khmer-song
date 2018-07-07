@@ -22,10 +22,14 @@ var _query = require('./common/query');
 
 var _sequelizeConnection = require('./common/sequelize-connection');
 
+var _admin = require('./api/private/admin');
+
+var _admin2 = _interopRequireDefault(_admin);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express2.default)();
-
+const { ENDPOINT } = process.env;
 app.use((0, _morgan2.default)('dev'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: false }));
@@ -45,10 +49,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/', (req, res) => {
-    console.log('hello from route 1');
-    return res.json({ something: 'sssss' });
-});
+app.use(`${ENDPOINT}/admin`, _admin2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map

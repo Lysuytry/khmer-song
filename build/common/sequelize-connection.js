@@ -17,7 +17,7 @@ const sequelize = new _sequelize2.default(DBNAME, DBUSER, DBPASS, {
   dialect: DBTYPE
 });
 
-sequelize.sync({ force: true });
+sequelize.sync();
 
 exports.Sequelize = _sequelize2.default;
 exports.sequelize = sequelize;

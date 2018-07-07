@@ -15,7 +15,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const Album = _sequelizeConnection.sequelize.define('albums', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey },
   name: { type: _sequelizeConnection.Sequelize.STRING, allowNull: false },
-  image: { type: _sequelizeConnection.Sequelize.TEXT, allowNull: true, validate: { isAlphanumeric } },
+  image: { type: _sequelizeConnection.Sequelize.TEXT, allowNull: true },
   status: { type: _sequelizeConnection.Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active' },
   productId: { type: _sequelizeConnection.Sequelize.INTEGER, references: {
       model: _production2.default,

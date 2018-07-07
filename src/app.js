@@ -4,9 +4,10 @@ import body from 'body-parser';
 import 'dotenv/config';
 import {fliterQuery} from './common/query';
 import {sequelize} from './common/sequelize-connection';
+import admin from './api/private/admin';
 
 const app = express();
-
+const {ENDPOINT} = process.env;
 app.use(logger('dev'));
 app.use(body.json());
 app.use(body.urlencoded({ extended: false}));
@@ -22,12 +23,8 @@ app.use((req, res, next) => {
     res.fail = (message, code = 500) => {return res.status(code).json(message); };
     //parse to next
     next();
-
 });
 
-app.get('/', (req, res) => {
-    console.log('hello from route 1');
-    return res.json({something: 'sssss'});
-});
+app.use(`${ENDPOINT}/admin`, admin);
 
 export default app;

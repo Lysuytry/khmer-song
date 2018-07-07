@@ -4,7 +4,7 @@ const Artist = sequelize.define('artists', {
   id: {type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true},
   name: {type: Sequelize.STRING(100), allowNull: false},
   type: {type: Sequelize.ENUM('new','old'), allowNull: false, defaultValue: 'new', validate: {isLowercase: true}},
-  image: {type: Sequelize.TEXT, allowNull: true, validate: {isAlphanumeric: true}},
+  image: {type: Sequelize.TEXT, allowNull: true},
   status: {type: Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active'},
   createdBy: {type: Sequelize.STRING(50), defaultValue: 'admin'},
   updatedBy: {type: Sequelize.STRING(50), defaultValue: 'admin'}
