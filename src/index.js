@@ -1,6 +1,6 @@
 import app from './app';
 
-const port = 3000;
+const {PORT} = process.env;
 
 //if no route match => matched this route instead
 app.use((req, res, next) => {
@@ -15,6 +15,6 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(port, () => {
-    console.log(`We are open port ${port} for our express app`);
+app.listen(PORT, () => {
+    console.log(`We are open port ${PORT} for our express app`);
 });

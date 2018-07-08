@@ -43,11 +43,11 @@ app.use((req, res, next) => {
     (0, _query.fliterQuery)(req);
     //for response success
     res.success = (data, options, code = 200) => {
-        return typeof data === 'object' ? res.status(code).json({ data, options }) : res.status(code).json(data);;
+        return typeof data === 'object' ? res.status(code).json({ data, options }) : res.status(code).json({ message: data });;
     };
     //for response error
     res.fail = (message, code = 500) => {
-        return res.status(code).json(message);
+        return res.status(code).json({ message });
     };
     //parse to next
     next();

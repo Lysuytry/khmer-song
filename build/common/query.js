@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 const fliterQuery = exports.fliterQuery = req => {
-  const { limit, offset, status } = req.body;
-  req.body.limit = limit > 20 ? 20 : +limit;
-  req.body.offset = offset ? 0 : +offset;
-  req.body.status = status ? status : 'active';
+  const { limit = 20, offset = 0, status = 'active' } = req.query;
+  req.query.limit = limit > 20 ? 20 : +limit;
+  req.query.offset = +offset;
+  req.query.status = status;
 };
 //# sourceMappingURL=query.js.map
