@@ -18,13 +18,13 @@ var _morgan = require('morgan');
 
 var _morgan2 = _interopRequireDefault(_morgan);
 
-var _admin = require('./api/private/admin');
+var _admin = require('./api/admin/admin');
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _public = require('./api/public/public');
+var _auth = require('./api/auth/auth.route');
 
-var _public2 = _interopRequireDefault(_public);
+var _auth2 = _interopRequireDefault(_auth);
 
 var _query = require('./common/query');
 
@@ -53,8 +53,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(`${ENDPOINT}/`, _auth2.default);
 app.use(`${ENDPOINT}/admin`, _admin2.default);
-app.use(`${ENDPOINT}/`, _public2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map

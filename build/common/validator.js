@@ -13,6 +13,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const validator = exports.validator = (data, schema, req, res, next) => {
   const error = _joi2.default.validate(data, schema);
-  error.error === null ? next() : res.fail(error.error);
+  error.error === null ? next() : res.fail(error);
 };
 //# sourceMappingURL=validator.js.map

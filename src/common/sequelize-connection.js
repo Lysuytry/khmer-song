@@ -6,6 +6,9 @@ const sequelize = new Sequelize(DBNAME, DBUSER, DBPASS, {
   dialect: DBTYPE
 });
 
+
+const Op = Sequelize.Op;
+
 //sequelize.sync({ force: true});
 
-export { Sequelize, sequelize};
+export { Sequelize, sequelize, Op};

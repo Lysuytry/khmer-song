@@ -2,8 +2,8 @@ import body from 'body-parser';
 import 'dotenv/config';
 import express from 'express';
 import logger from 'morgan';
-import admin from './api/private/admin';
-import publicApi from './api/public/public';
+import admin from './api/admin/admin';
+import auth from './api/auth/auth.route';
 import { fliterQuery } from './common/query';
 
 const app = express();
@@ -27,7 +27,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(`${ENDPOINT}/`, auth);
 app.use(`${ENDPOINT}/admin`, admin);
-app.use(`${ENDPOINT}/`, publicApi);
+
 
 export default app;

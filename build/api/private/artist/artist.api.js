@@ -25,7 +25,7 @@ const getArtistList = exports.getArtistList = async (req, res) => {
 
 const createArtist = exports.createArtist = async (req, res) => {
   try {
-    const { name, type } = req.body;
+    const { name } = req.body;
     const [artist] = await _artist2.default.findOrCreate({ where: { name }, defaults: req.body });
     res.success(artist);
   } catch (error) {

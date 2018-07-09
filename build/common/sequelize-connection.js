@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.sequelize = exports.Sequelize = undefined;
+exports.Op = exports.sequelize = exports.Sequelize = undefined;
 
 var _sequelize = require('sequelize');
 
@@ -17,8 +17,11 @@ const sequelize = new _sequelize2.default(DBNAME, DBUSER, DBPASS, {
   dialect: DBTYPE
 });
 
+const Op = _sequelize2.default.Op;
+
 //sequelize.sync({ force: true});
 
 exports.Sequelize = _sequelize2.default;
 exports.sequelize = sequelize;
+exports.Op = Op;
 //# sourceMappingURL=sequelize-connection.js.map

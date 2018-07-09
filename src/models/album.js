@@ -6,7 +6,7 @@ const Album = sequelize.define('albums', {
   name: {type: Sequelize.STRING, allowNull: false},
   image: {type: Sequelize.TEXT, allowNull: true},
   status: {type: Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active'},
-  productId: {type: Sequelize.INTEGER.UNSIGNED, references: {
+  productionId: {type: Sequelize.INTEGER.UNSIGNED, references: {
     model: 'productions',
     key: 'id',
   }, onDelete: 'SET NULL', onUpdate: 'CASCADE'},

@@ -13,7 +13,7 @@ const Album = _sequelizeConnection.sequelize.define('albums', {
   name: { type: _sequelizeConnection.Sequelize.STRING, allowNull: false },
   image: { type: _sequelizeConnection.Sequelize.TEXT, allowNull: true },
   status: { type: _sequelizeConnection.Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active' },
-  productId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, references: {
+  productionId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, references: {
       model: 'productions',
       key: 'id'
     }, onDelete: 'SET NULL', onUpdate: 'CASCADE' },
