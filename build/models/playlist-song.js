@@ -11,7 +11,7 @@ var _sequelizeConnection = require('../common/sequelize-connection');
 
 const PlaylistSong = _sequelizeConnection.sequelize.define('playlists-songs', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-  playlistId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, references: {
+  playlistId: { type: _sequelizeConnection.Sequelize.CHAR(64), references: {
       model: 'playlists',
       key: 'id'
     }, onDelete: 'CASCADE', onUpdate: 'CASCADE' },

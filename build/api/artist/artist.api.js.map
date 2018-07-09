@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/api/artist/artist.api.js"],"names":["getArtistList"],"mappings":";;;;;;;AAAA;;AACA;QACQA,a,GAAAA,qB","file":"artist.api.js","sourcesContent":["import {getArtistList} from '../admin/artist/artist.api';\n//import from admin\nexport {getArtistList};\n"]}

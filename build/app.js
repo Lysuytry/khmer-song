@@ -22,9 +22,21 @@ var _admin = require('./api/admin/admin');
 
 var _admin2 = _interopRequireDefault(_admin);
 
+var _artist = require('./api/artist/artist.route');
+
+var _artist2 = _interopRequireDefault(_artist);
+
 var _auth = require('./api/auth/auth.route');
 
 var _auth2 = _interopRequireDefault(_auth);
+
+var _production = require('./api/production/production.route');
+
+var _production2 = _interopRequireDefault(_production);
+
+var _playlist = require('./api/playlist/playlist.route');
+
+var _playlist2 = _interopRequireDefault(_playlist);
 
 var _query = require('./common/query');
 
@@ -43,7 +55,7 @@ app.use((req, res, next) => {
   (0, _query.fliterQuery)(req);
   //for response success
   res.success = (data, options, code = 200) => {
-    return typeof data === 'object' ? res.status(code).json({ data, options }) : res.status(code).json({ message: data });;
+    return typeof data === 'object' ? res.status(code).json({ data, options }) : res.status(code).json({ message: data });
   };
   //for response error
   res.fail = (message, code = 500) => {
@@ -55,6 +67,9 @@ app.use((req, res, next) => {
 
 app.use(`${ENDPOINT}/`, _auth2.default);
 app.use(`${ENDPOINT}/admin`, _admin2.default);
+app.use(`${ENDPOINT}/artists`, _artist2.default);
+app.use(`${ENDPOINT}/playlist`, _playlist2.default);
+app.use(`${ENDPOINT}/productions`, _production2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map

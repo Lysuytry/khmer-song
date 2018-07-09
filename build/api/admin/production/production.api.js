@@ -58,7 +58,6 @@ const updateProductionById = exports.updateProductionById = async (req, res) => 
 const deleteProductionById = exports.deleteProductionById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.query;
     const [result] = await _production2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
     result === 0 ? res.success('Id is not found.') : res.success('Successfully deleted.');
   } catch (error) {

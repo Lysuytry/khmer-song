@@ -4,7 +4,7 @@ import {Sequelize, sequelize} from '../common/sequelize-connection';
 
 const PlaylistSong = sequelize.define('playlists-songs', {
   id: {type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true},
-  playlistId: {type: Sequelize.INTEGER.UNSIGNED, references: {
+  playlistId: {type: Sequelize.CHAR(64), references: {
     model: 'playlists',
     key: 'id'
   }, onDelete: 'CASCADE', onUpdate: 'CASCADE'},

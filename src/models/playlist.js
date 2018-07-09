@@ -3,14 +3,12 @@ import {Sequelize, sequelize} from '../common/sequelize-connection';
 //import Song from './song';
 
 const Playlist = sequelize.define('playists', {
-  id: {type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true},
+  id: {type: Sequelize.CHAR(36), defaultValue: Sequelize.UUIDV4, primaryKey: true},
   name: {type: Sequelize.STRING(70), allowNull: false},
   userId: {type: Sequelize.INTEGER.UNSIGNED, references: {
     model: 'users',
     key: 'id'
-  }, onDelete: 'SET NULL', onUpdate: 'CASCADE'},
-  createdBy: {type: Sequelize.STRING(50), defaultValue: 'admin'},
-  updatedBy: {type: Sequelize.STRING(50), defaultValue: 'admin'}
+  }, onDelete: 'CASCADE', onUpdate: 'CASCADE'}
 }, {timestamps: true});
 
 //Playlist.belongsToMany(User);

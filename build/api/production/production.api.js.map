@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/api/production/production.api.js"],"names":["getProductionList"],"mappings":";;;;;;;AAAA;;AACA;;QAEQA,iB,GAAAA,6B","file":"production.api.js","sourcesContent":["import {getProductionList} from '../admin/production/production.api';\n//from admin productions\n\nexport {getProductionList};\n"]}

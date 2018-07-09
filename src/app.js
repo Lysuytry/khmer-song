@@ -3,7 +3,10 @@ import 'dotenv/config';
 import express from 'express';
 import logger from 'morgan';
 import admin from './api/admin/admin';
-import auth from './api/auth/auth.route';
+import routeArtist from './api/artist/artist.route';
+import routeAuth from './api/auth/auth.route';
+import routeProduction from './api/production/production.route';
+import routePlaylist from './api/playlist/playlist.route';
 import { fliterQuery } from './common/query';
 
 const app = express();
@@ -19,7 +22,7 @@ app.use((req, res, next) => {
   fliterQuery(req);
   //for response success
   res.success = (data, options, code = 200) => {
-    return typeof data === 'object' ? res.status(code).json({data, options}) : res.status(code).json({message: data});;
+    return typeof data === 'object' ? res.status(code).json({data, options}) : res.status(code).json({message: data});
   };
   //for response error
   res.fail = (message, code = 500) => {return res.status(code).json({message}); };
@@ -27,8 +30,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(`${ENDPOINT}/`, auth);
+app.use(`${ENDPOINT}/`, routeAuth);
 app.use(`${ENDPOINT}/admin`, admin);
-
+app.use(`${ENDPOINT}/artists`, routeArtist);
+app.use(`${ENDPOINT}/playlist`, routePlaylist);
+app.use(`${ENDPOINT}/productions`, routeProduction);
 
 export default app;

@@ -1,5 +1,6 @@
 import Production from '../../../models/production';
 import {Op} from '../../../common/sequelize-connection';
+
 export const getProductionList = async (req, res) => {
   try{
     const {limit, offset, status, name} = req.query;
@@ -20,7 +21,7 @@ export const createProduction = async (req, res) => {
   } catch(error){
     res.fail(error);
   }
-}
+};
 
 export const updateProductionById = async (req, res) => {
   try{
@@ -43,7 +44,6 @@ export const updateProductionById = async (req, res) => {
 export const deleteProductionById = async (req, res) => {
   try{
     const {id} = req.params;
-    const {status} = req.query;
     const [result] = await Production.update({status: 'inactive'}, {where: {id, status: 'active'}});
     result === 0 ? res.success('Id is not found.') : res.success('Successfully deleted.');
   } catch(error){
