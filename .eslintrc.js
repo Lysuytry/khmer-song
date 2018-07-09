@@ -15,7 +15,7 @@ module.exports = {
         "no-eval": 1,
         "indent": [
             "error",
-            4
+            2
         ],
         "semi": [
             "error",
