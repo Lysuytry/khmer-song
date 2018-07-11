@@ -41,13 +41,13 @@ const updateProductionById = exports.updateProductionById = async (req, res) => 
   try {
     const { id } = req.params;
     const statusQuery = req.query.status;
-    let { name, logo, status, createdBy, updatedBy } = req.body;
+    let { name, logo, status, updatedBy } = req.body;
     name = name ? { name } : {};
     logo = logo ? { logo } : {};
-    createdBy = createdBy ? { createdBy } : {};
+    //createdBy = createdBy ? {createdBy} : {};
     updatedBy = updatedBy ? { updatedBy } : {};
     status = status ? { status } : {};
-    const data = _extends({}, name, logo, status, createdBy, updatedBy);
+    const data = _extends({}, name, logo, status, updatedBy);
     await _production2.default.update(data, { where: { id, 'status': statusQuery } });
     res.success('Successfully updated.');
   } catch (error) {

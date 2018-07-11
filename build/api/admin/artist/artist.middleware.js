@@ -18,8 +18,8 @@ const artistCreatingSchema = _joi2.default.object().keys({
   type: _joi2.default.string(),
   image: _joi2.default.string(),
   status: _joi2.default.string(),
-  createdBy: _joi2.default.string(),
-  updatedBy: _joi2.default.string()
+  createdBy: _joi2.default.number(),
+  updatedBy: _joi2.default.number()
 });
 
 const artistUpdatingSchema = _joi2.default.object().keys({
@@ -27,8 +27,8 @@ const artistUpdatingSchema = _joi2.default.object().keys({
   type: _joi2.default.string(),
   image: _joi2.default.string(),
   status: _joi2.default.string(),
-  createdBy: _joi2.default.string(),
-  updatedBy: _joi2.default.string()
+  createdBy: _joi2.default.number(),
+  updatedBy: _joi2.default.number()
 });
 
 const validateArtistCreating = exports.validateArtistCreating = (req, res, next) => {

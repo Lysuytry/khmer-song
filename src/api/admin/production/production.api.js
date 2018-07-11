@@ -27,13 +27,13 @@ export const updateProductionById = async (req, res) => {
   try{
     const {id} = req.params;
     const statusQuery = req.query.status;
-    let {name, logo, status, createdBy, updatedBy} = req.body;
+    let {name, logo, status, updatedBy} = req.body;
     name = name ? {name} : {};
     logo = logo ? {logo} : {};
-    createdBy = createdBy ? {createdBy} : {};
+    //createdBy = createdBy ? {createdBy} : {};
     updatedBy = updatedBy ? {updatedBy} : {};
     status = status ? {status} : {};
-    const data = {...name, ...logo, ...status, ...createdBy, ...updatedBy};
+    const data = {...name, ...logo, ...status, ...updatedBy};
     await Production.update(data, {where: {id, 'status': statusQuery}});
     res.success('Successfully updated.');
   } catch(error){

@@ -17,8 +17,8 @@ const albumCreatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string().required(),
   image: _joi2.default.string(),
   productionId: _joi2.default.number(),
-  updatedBy: _joi2.default.string(),
-  createdBy: _joi2.default.string(),
+  updatedBy: _joi2.default.number(),
+  createdBy: _joi2.default.number(),
   status: _joi2.default.string()
 });
 
@@ -26,8 +26,8 @@ const albumUpdatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string(),
   image: _joi2.default.string(),
   productionId: _joi2.default.number(),
-  updatedBy: _joi2.default.string(),
-  createdBy: _joi2.default.string(),
+  updatedBy: _joi2.default.number().required(),
+  createdBy: _joi2.default.number(),
   status: _joi2.default.string()
 });
 

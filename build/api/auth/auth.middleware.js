@@ -16,22 +16,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const authRegisterSchema = _joi2.default.object().keys({
   username: _joi2.default.string().alphanum().required(),
   password: _joi2.default.string().alphanum().required(),
-  role: _joi2.default.string()
+  role: _joi2.default.string(),
+  createdBy: _joi2.default.number().required(),
+  updatedBy: _joi2.default.number().required()
 });
 
 const authLoginSchema = _joi2.default.object().keys({
   username: _joi2.default.string().alphanum().required(),
   password: _joi2.default.string().alphanum().required(),
-  role: _joi2.default.string()
+  role: _joi2.default.string(),
+  createdBy: _joi2.default.number(),
+  updatedBy: _joi2.default.number()
 });
 
 const validateAuthRegister = exports.validateAuthRegister = (req, res, next) => {
-  const { username, password, role } = req.body;
-  (0, _validator.validator)({ username, password, role }, authRegisterSchema, req, res, next);
+  const { username, password, role, createdBy, updatedBy } = req.body;
+  (0, _validator.validator)({ username, password, role, createdBy, updatedBy }, authRegisterSchema, req, res, next);
 };
 
 const validateAuthLogin = exports.validateAuthLogin = (req, res, next) => {
-  const { username, password, role } = req.body;
-  (0, _validator.validator)({ username, password, role }, authLoginSchema, req, res, next);
+  const { username, password, role, createdBy, updatedBy } = req.body;
+  (0, _validator.validator)({ username, password, role, createdBy, updatedBy }, authLoginSchema, req, res, next);
 };
 //# sourceMappingURL=auth.middleware.js.map

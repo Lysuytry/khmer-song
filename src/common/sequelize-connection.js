@@ -6,6 +6,7 @@ const sequelize = new Sequelize(DBNAME, DBUSER, DBPASS, {
   dialect: DBTYPE
 });
 
+//const transaction = sequelize.transaction();
 
 const Op = Sequelize.Op;
 

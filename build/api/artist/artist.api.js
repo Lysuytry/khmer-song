@@ -5,8 +5,25 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getArtistList = undefined;
 
-var _artist = require('../admin/artist/artist.api');
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-//import from admin
-exports.getArtistList = _artist.getArtistList;
+var _artist = require('../../models/artist');
+
+var _artist2 = _interopRequireDefault(_artist);
+
+var _sequelizeConnection = require('../../common/sequelize-connection');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const getArtistList = exports.getArtistList = async (req, res) => {
+  try {
+    const { limit, offset, status, name } = req.query;
+    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const conditions = _extends({}, fliterName, { status });
+    const { rows, count } = await _artist2.default.findAndCountAll({ where: conditions, limit, offset });
+    res.success(rows, { limit, offset, count });
+  } catch (error) {
+    res.fail(error);
+  }
+};
 //# sourceMappingURL=artist.api.js.map

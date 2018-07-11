@@ -6,8 +6,8 @@ const artistCreatingSchema = Joi.object().keys({
   type: Joi.string(),
   image: Joi.string(),
   status: Joi.string(),
-  createdBy: Joi.string(),
-  updatedBy: Joi.string()
+  createdBy: Joi.number(),
+  updatedBy: Joi.number()
 });
 
 const artistUpdatingSchema = Joi.object().keys({
@@ -15,8 +15,8 @@ const artistUpdatingSchema = Joi.object().keys({
   type: Joi.string(),
   image: Joi.string(),
   status: Joi.string(),
-  createdBy: Joi.string(),
-  updatedBy: Joi.string()
+  createdBy: Joi.number(),
+  updatedBy: Joi.number()
 });
 
 export const validateArtistCreating = (req, res, next) => {

@@ -16,15 +16,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const productionCreatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string().required(),
   logo: _joi2.default.string(),
-  updatedBy: _joi2.default.string(),
-  createdBy: _joi2.default.string()
+  updatedBy: _joi2.default.number(),
+  createdBy: _joi2.default.number()
 });
 
 const productionUpdatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string(),
   logo: _joi2.default.string(),
-  updatedBy: _joi2.default.string(),
-  createdBy: _joi2.default.string(),
+  updatedBy: _joi2.default.number(),
+  createdBy: _joi2.default.number(),
   status: _joi2.default.string()
 });
 

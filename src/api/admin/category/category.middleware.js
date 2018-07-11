@@ -4,15 +4,15 @@ import {validator} from '../../../common/validator';
 const categoryCreatingSchema = Joi.object().keys({
   name: Joi.string().required(),
   status: Joi.string(),
-  createdBy: Joi.string(),
-  updatedBy: Joi.string()
+  createdBy: Joi.number(),
+  updatedBy: Joi.number()
 });
 
 const categoryUpdatingSchema = Joi.object().keys({
   name: Joi.string(),
   status: Joi.string(),
-  createdBy: Joi.string(),
-  updatedBy: Joi.string()
+  createdBy: Joi. number(),
+  updatedBy: Joi.number()
 });
 
 export const validatCategoryCreating = (req, res, next) => {

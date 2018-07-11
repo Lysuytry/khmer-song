@@ -2,16 +2,9 @@ import {Sequelize, sequelize} from '../common/sequelize-connection';
 //import Playlist from './playlist';
 //import Song from './song';
 
-const PlaylistSong = sequelize.define('playlists-songs', {
-  id: {type: Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true},
-  playlistId: {type: Sequelize.CHAR(64), references: {
-    model: 'playlists',
-    key: 'id'
-  }, onDelete: 'CASCADE', onUpdate: 'CASCADE'},
-  songId: {type: Sequelize.INTEGER.UNSIGNED, references: {
-    model: 'songs',
-    key: 'id'
-  }, onDelete: 'CASCADE', onUpdate: 'CASCADE'}
+const PlaylistSong = sequelize.define('playlistSongs', {
+  playlistId: {type: Sequelize.CHAR(64), primaryKey: true},
+  songId: {type: Sequelize.INTEGER.UNSIGNED, primaryKey: true}
 }, {timestamps: false});
 
 export default PlaylistSong;

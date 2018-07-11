@@ -6,7 +6,9 @@ const User = sequelize.define('users', {
   username: {type: Sequelize.STRING(100), allowNull: false, validate: {isAlphanumeric: true}},
   password: {type: Sequelize.STRING(100), allowNull: false},
   role: {type: Sequelize.ENUM('guest', 'admin'), defaultValue: 'guest'},
-  status: {type: Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active'}
+  status: {type: Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active'},
+  createdBy: {type: Sequelize.INTEGER.UNSIGNED, allowNull: false},
+  updatedBy: {type: Sequelize.INTEGER.UNSIGNED, allowNull: false}
 }, {timestamps: true});
 
 //User.hasMany(Playlist);

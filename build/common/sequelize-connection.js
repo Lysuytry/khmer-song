@@ -17,6 +17,8 @@ const sequelize = new _sequelize2.default(DBNAME, DBUSER, DBPASS, {
   dialect: DBTYPE
 });
 
+//const transaction = sequelize.transaction();
+
 const Op = _sequelize2.default.Op;
 
 //sequelize.sync({ force: true});

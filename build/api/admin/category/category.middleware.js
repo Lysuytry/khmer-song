@@ -16,15 +16,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const categoryCreatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string().required(),
   status: _joi2.default.string(),
-  createdBy: _joi2.default.string(),
-  updatedBy: _joi2.default.string()
+  createdBy: _joi2.default.number(),
+  updatedBy: _joi2.default.number()
 });
 
 const categoryUpdatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string(),
   status: _joi2.default.string(),
-  createdBy: _joi2.default.string(),
-  updatedBy: _joi2.default.string()
+  createdBy: _joi2.default.number(),
+  updatedBy: _joi2.default.number()
 });
 
 const validatCategoryCreating = exports.validatCategoryCreating = (req, res, next) => {

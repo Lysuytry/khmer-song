@@ -5,8 +5,8 @@ const albumCreatingSchema = Joi.object().keys({
   name: Joi.string().required(),
   image: Joi.string(),
   productionId: Joi.number(),
-  updatedBy: Joi.string(),
-  createdBy: Joi.string(),
+  updatedBy: Joi.number(),
+  createdBy: Joi.number(),
   status: Joi.string()
 });
 
@@ -14,8 +14,8 @@ const albumUpdatingSchema = Joi.object().keys({
   name: Joi.string(),
   image: Joi.string(),
   productionId: Joi.number(),
-  updatedBy: Joi.string(),
-  createdBy: Joi.string(),
+  updatedBy: Joi.number().required(),
+  createdBy: Joi.number(),
   status: Joi.string()
 });
 

@@ -40,9 +40,13 @@ var _playlist2 = _interopRequireDefault(_playlist);
 
 var _query = require('./common/query');
 
+var _admin3 = require('./api/admin/admin.middleware');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express2.default)();
+//checkfunction is from admin middleware to check token user admin
+
 
 const { ENDPOINT } = process.env;
 
@@ -55,10 +59,11 @@ app.use((req, res, next) => {
   (0, _query.fliterQuery)(req);
   //for response success
   res.success = (data, options, code = 200) => {
-    return typeof data === 'object' ? res.status(code).json({ data, options }) : res.status(code).json({ message: data });
+    return typeof data === 'object' ? options ? res.status(code).json({ data, options }) : res.status(code).json(data) : res.status(code).json({ message: data });
   };
   //for response error
   res.fail = (message, code = 500) => {
+    console.log(message.statck);
     return res.status(code).json({ message });
   };
   //parse to next
@@ -66,7 +71,7 @@ app.use((req, res, next) => {
 });
 
 app.use(`${ENDPOINT}/`, _auth2.default);
-app.use(`${ENDPOINT}/admin`, _admin2.default);
+app.use(`${ENDPOINT}/admin`, _admin3.checkToken, _admin2.default);
 app.use(`${ENDPOINT}/artists`, _artist2.default);
 app.use(`${ENDPOINT}/playlist`, _playlist2.default);
 app.use(`${ENDPOINT}/productions`, _production2.default);

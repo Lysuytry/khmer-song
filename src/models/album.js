@@ -11,8 +11,8 @@ const Album = sequelize.define('albums', {
     model: 'productions',
     key: 'id',
   }, onDelete: 'SET NULL', onUpdate: 'SET NULL'},
-  createdBy: {type: Sequelize.STRING(50), defaultValue: 'admin'},
-  updatedBy: {type: Sequelize.STRING(50), defaultValue: 'admin'}
+  createdBy: {type: Sequelize.INTEGER.UNSIGNED, allowNull: false},
+  updatedBy: {type: Sequelize.INTEGER.UNSIGNED, allowNull: false}
 }, {timestamps: true});
 
 export default Album;

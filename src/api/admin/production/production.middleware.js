@@ -4,15 +4,15 @@ import {validator} from '../../../common/validator';
 const productionCreatingSchema = Joi.object().keys({
   name: Joi.string().required(),
   logo: Joi.string(),
-  updatedBy: Joi.string(),
-  createdBy: Joi.string(),
+  updatedBy: Joi.number(),
+  createdBy: Joi.number()
 });
 
 const productionUpdatingSchema = Joi.object().keys({
   name: Joi.string(),
   logo: Joi.string(),
-  updatedBy: Joi.string(),
-  createdBy: Joi.string(),
+  updatedBy: Joi.number(),
+  createdBy: Joi.number(),
   status: Joi.string()
 });
 

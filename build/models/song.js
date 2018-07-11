@@ -3,12 +3,16 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.insertSong = undefined;
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
-// import Album from './album';
-// import Category from './category';
-//import Artist from './artist';
+var _artistSong = require('./artist-song');
+
+var _artistSong2 = _interopRequireDefault(_artistSong);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 //import Playlist from './playlist';
 
 const Song = _sequelizeConnection.sequelize.define('songs', {
@@ -25,14 +29,36 @@ const Song = _sequelizeConnection.sequelize.define('songs', {
       key: 'id'
     }, onDelete: 'SET NULL', onUpdate: 'CASCADE' },
   status: { type: _sequelizeConnection.Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active' },
-  createdBy: { type: _sequelizeConnection.Sequelize.STRING(50), defaultValue: 'admin' },
-  updatedBy: { type: _sequelizeConnection.Sequelize.STRING(50), defaultValue: 'admin' }
+  createdBy: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, allowNull: false },
+  updatedBy: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, allowNull: false }
 }, { timestamps: true });
-
-//Song.belongsTo(Album);
-//Song.belongsTo(Category);
-//Song.belongsToMany(Artist);
-//Song.belongsToMany(Playlist);
+// import Album from './album';
+// import Category from './category';
+const insertSong = exports.insertSong = async data => {
+  const transaction = await _sequelizeConnection.sequelize.transaction();
+  try {
+    const { artistIds, duration, size, name } = data;
+    const conditions = { name, duration, size };
+    console.log(data);
+    //create song with that transaction
+    const [song] = await Song.findOrCreate({ where: conditions, defaults: data, transaction });
+    //map into one object => (songId, artistId)
+    const artistSongs = artistIds.map(artistId => ({
+      songId: song.id,
+      artistId: artistId
+    }));
+    //insert many into ArtistSong
+    await _artistSong2.default.bulkCreate(artistSongs, { transaction });
+    //we need to commit data
+    transaction.commit();
+    //End transaction
+    ////////////////////
+    return song;
+  } catch (error) {
+    transaction.rollback();
+    throw error;
+  }
+};
 
 exports.default = Song;
 //# sourceMappingURL=song.js.map
