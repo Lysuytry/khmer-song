@@ -38,6 +38,10 @@ var _playlist = require('./api/playlist/playlist.route');
 
 var _playlist2 = _interopRequireDefault(_playlist);
 
+var _song = require('./api/song/song.route');
+
+var _song2 = _interopRequireDefault(_song);
+
 var _query = require('./common/query');
 
 var _admin3 = require('./api/admin/admin.middleware');
@@ -72,6 +76,7 @@ app.use((req, res, next) => {
 
 app.use(`${ENDPOINT}/`, _auth2.default);
 app.use(`${ENDPOINT}/admin`, _admin3.checkToken, _admin2.default);
+app.use(`${ENDPOINT}/songs`, _song2.default);
 app.use(`${ENDPOINT}/artists`, _artist2.default);
 app.use(`${ENDPOINT}/playlist`, _playlist2.default);
 app.use(`${ENDPOINT}/productions`, _production2.default);

@@ -21,7 +21,7 @@ const sequelize = new _sequelize2.default(DBNAME, DBUSER, DBPASS, {
 
 const Op = _sequelize2.default.Op;
 
-//sequelize.sync({ force: true});
+//sequelize.sync();
 
 exports.Sequelize = _sequelize2.default;
 exports.sequelize = sequelize;

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.validatePlaylistCreating = undefined;
+exports.validateAddSongToPlaylist = exports.validatePlaylistCreating = undefined;
 
 var _joi = require('joi');
 
@@ -18,8 +18,18 @@ const playlistCreatingSchema = _joi2.default.object().keys({
   userId: _joi2.default.number().required()
 });
 
+const addSongSchema = _joi2.default.object().keys({
+  playlistId: _joi2.default.number().required(),
+  songId: _joi2.default.number().required()
+});
+
 const validatePlaylistCreating = exports.validatePlaylistCreating = (req, res, next) => {
   const { name, userId } = req.body;
   (0, _validator.validator)({ name, userId }, playlistCreatingSchema, req, res, next);
+};
+
+const validateAddSongToPlaylist = exports.validateAddSongToPlaylist = (req, res, next) => {
+  const { playlistId, songId } = req.body;
+  (0, _validator.validator)({ playlistId, songId }, addSongSchema, req, res, next);
 };
 //# sourceMappingURL=playlist.middleware.js.map

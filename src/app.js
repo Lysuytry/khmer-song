@@ -8,6 +8,7 @@ import routeArtist from './api/artist/artist.route';
 import routeAuth from './api/auth/auth.route';
 import routeProduction from './api/production/production.route';
 import routePlaylist from './api/playlist/playlist.route';
+import routeSong from './api/song/song.route';
 
 import { fliterQuery } from './common/query';
 //checkfunction is from admin middleware to check token user admin
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
 
 app.use(`${ENDPOINT}/`, routeAuth);
 app.use(`${ENDPOINT}/admin`, checkToken, admin);
+app.use(`${ENDPOINT}/songs`, routeSong);
 app.use(`${ENDPOINT}/artists`, routeArtist);
 app.use(`${ENDPOINT}/playlist`, routePlaylist);
 app.use(`${ENDPOINT}/productions`, routeProduction);

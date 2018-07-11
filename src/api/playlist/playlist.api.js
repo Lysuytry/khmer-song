@@ -1,39 +1,100 @@
 import Playlist from '../../models/playlist';
 import User from '../../models/user';
-import { Op } from '../../common/sequelize-connection';
+import Song from '../../models/song';
+import PlaylistSong from '../../models/playlist-song';
+import { Op, sequelize } from '../../common/sequelize-connection';
 
 export const getPlaylist = async (req, res) => {
-  try{
-    const {id} = req.params;
-    const {limit, offset, name} = req.query;
-    const fliterName = name ? {name: {[Op.like]: `%${name}%` } } : {};
-    const conditions = {userId: id, ...fliterName};
-    const {rows, count} = await Playlist.findAndCountAll({where: conditions, offset, limit});
-    res.success(rows, {count, limit, offset});
-  } catch(error){
+  try {
+    const { id } = req.params;
+    const { limit, offset, name } = req.query;
+    const fliterName = name ? { name: { [Op.like]: `%${name}%` } } : {};
+    const conditions = { userId: id, ...fliterName };
+    const { rows, count } = await Playlist.findAndCountAll({ where: conditions, offset, limit });
+    res.success(rows, { count, limit, offset });
+  } catch (error) {
     res.fail(error);
   }
 };
 
 export const createPlaylist = async (req, res) => {
-  try{
-    const {name, userId} = req.body;
+  try {
+    const { name, userId } = req.body;
     //we must know who created it
     const user = await User.findById(userId);
-    const [playlist] = !user ? res.fail('User Id is not found.') :
-      await Playlist.findOrCreate({where: {name}, defaults: req.body});
+    const [playlist] = !user
+      ? res.fail('User Id is not found.')
+      : await Playlist.findOrCreate({ where: { name, userId }, defaults: req.body });
     res.success(playlist);
-  } catch(error){
+  } catch (error) {
     res.fail(error);
   }
 };
 
 export const deletePlaylist = async (req, res) => {
-  try{
-    const {id} = req.params;
-    const result = await Playlist.destroy({where: {id} });
-    result ? res.success('Successfully deleted.') : res.fail('Id is not found.');
-  } catch(error){
+  const transaction = await sequelize.transaction();
+  try {
+    const { id } = req.params;
+    await Playlist.destroy({ where: { id }, transaction});
+    await PlaylistSong.destroy({ where: { playlistId: id }, transaction});
+    transaction.commit();
+    res.success('Successfully deleted.');
+  } catch (error) {
+    transaction.rollback();
+    res.fail(error.message);
+  }
+};
+
+export const getSongFromPlaylist = async (req, res) => {
+  try {
+    // const { id } = req.params;
+    const { rows, count } = await PlaylistSong.findAndCountAll();
+    res.success(rows, { count });
+  } catch (error) {
     res.fail(error);
+  }
+};
+
+export const removeSongFromPlaylist = async (req, res) => {
+  try {
+    const { id, songId } = req.params;
+    //check playlist Id is existing
+    //count >findOne
+    const playlist = await Playlist.findOne({ attributes: ['id'], where: { id } });
+    //not => invalid playlist
+    if (!playlist) res.fail('Playlist Id is not valid.');
+    //success => check song id in playlistsong
+    const row = await PlaylistSong.destroy({ where: { playlistId: id, songId: songId } });
+    //if no check songId again
+    if (!row) return res.fail('Song Id is invalid.');
+    res.success('Successfully deletd.');
+  } catch (error) {
+    res.fail(error);
+  }
+};
+
+export const addSongToPlaylist = async (req, res) => {
+  try {
+    const { status } = req.query;
+    const { id, songId } = req.params;
+    //check if song if existing
+    const [song, playlist] = await Promise.all([
+      Song.findOne({ attributes: ['id'], where: { id: songId, status } }),
+      Playlist.findOne({ attributes: ['id'], where: { id } })
+    ]);
+    //if not => return songId is not found
+    if ( !song ) res.fail('Song is invalid.');
+    if ( !playlist ) res.fail('Playlist is invalid.');
+    //existing => add to table playlistsong
+    const [{ isNewRecord }] = await PlaylistSong.findOrCreate({
+      where: { playlistId: id, songId },
+      defaults: { playlistId: id, songId }
+    });
+    //result._options.isNewRecord =
+    !isNewRecord
+      ? res.success('Song has already added to playlist.')
+      : res.success('Successfully added song to playlist.');
+  } catch (error) {
+    res.fail(error.name);
   }
 };

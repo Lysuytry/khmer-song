@@ -69,7 +69,7 @@ const createSong = exports.createSong = async (req, res) => {
     const { status } = req.query;
     const fliterArtist = { id: { [_sequelizeConnection.Op.in]: artistIds }, status };
     //check all these folks that are existing or not ...
-    const [hasAlbum, hasCategory, hasArtist] = await Promise.all([_album2.default.count({ where: { id: albumId, status } }), _category2.default.count({ where: { id: categoryId, status } }), _artist2.default.findAll({ where: fliterArtist })]);
+    const [hasAlbum, hasCategory, hasArtist] = await Promise.all([_album2.default.findOne({ attributes: ['id'], where: { id: albumId, status } }), _category2.default.findOne({ attributes: ['id'], where: { id: categoryId, status } }), _artist2.default.findAll({ attributes: ['id'], where: fliterArtist })]);
     //response what wrong with these
     hasAlbum ? hasCategory ? hasArtist.length == artistIds.length ? {} : res.fail('Artist Id is not found.') : res.fail('Category Id is not found.') : res.fail('Album Id is not found.');
     //otherwise => insert part
@@ -82,9 +82,32 @@ const createSong = exports.createSong = async (req, res) => {
 
 const updateSongById = exports.updateSongById = async (req, res) => {
   try {
+    const { id } = req.params;
+    const { albumId, categoryId, artistIds, name, duration, size, updatedBy } = req.body;
+    //const { status } = req.query;
+    //check if song Id is exist or not because I dont want to query sth before check it
+    const result = await _song2.default.findOne({ where: { id, status: 'active' } });
+    if (!result) res.fail('Song Id is invalid.');
+    //if exist => query for update
+    const fliterAlbum = albumId ? _album2.default.findOne({ where: { id: albumId, status: 'active' } }) : {};
+    const fliterCategory = categoryId ? _category2.default.findOne({ where: { id: categoryId, status: 'active' } }) : {};
+    const fliterArtist = artistIds ? _artist2.default.findAll({ where: { id: { [_sequelizeConnection.Op.in]: artistIds }, status: 'active' } }) : {};
+    //if include album , ... => process to check
+    const [hasAlbum = 0, hasCategory = 0, hasArtist = 0] = await Promise.all([fliterAlbum, fliterCategory, fliterArtist]);
+    //response what wrong with these
+    hasAlbum ? hasCategory ? Array.isArray(hasArtist) ? hasArtist.length === artistIds.length ? {} //isArray but donot found some artist id
+    : res.fail('Some artist Id is invalid.') : {} // if no process of that query
+    : res.fail('Category Id is not found.') : res.fail('Album Id is not found.');
+
+    const fliterName = name ? { name: name } : {};
+    const fliterDuration = duration ? { duration: duration } : {};
+    const fliterSize = size ? { size: size } : {};
+    //for table song need to update
+    const data = _extends({}, fliterName, fliterSize, fliterDuration, fliterAlbum, fliterCategory, { updatedBy });
+    await (0, _song.updateSong)({ data, id, artistIds });
     res.success('Successfully updated.');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=song.api.js.map

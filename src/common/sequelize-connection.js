@@ -10,6 +10,6 @@ const sequelize = new Sequelize(DBNAME, DBUSER, DBPASS, {
 
 const Op = Sequelize.Op;
 
-//sequelize.sync({ force: true});
+//sequelize.sync();
 
 export { Sequelize, sequelize, Op};

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.deletePlaylist = exports.createPlaylist = exports.getPlaylist = undefined;
+exports.addSongToPlaylist = exports.removeSongFromPlaylist = exports.getSongFromPlaylist = exports.deletePlaylist = exports.createPlaylist = exports.getPlaylist = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -14,6 +14,14 @@ var _playlist2 = _interopRequireDefault(_playlist);
 var _user = require('../../models/user');
 
 var _user2 = _interopRequireDefault(_user);
+
+var _song = require('../../models/song');
+
+var _song2 = _interopRequireDefault(_song);
+
+var _playlistSong = require('../../models/playlist-song');
+
+var _playlistSong2 = _interopRequireDefault(_playlistSong);
 
 var _sequelizeConnection = require('../../common/sequelize-connection');
 
@@ -37,7 +45,7 @@ const createPlaylist = exports.createPlaylist = async (req, res) => {
     const { name, userId } = req.body;
     //we must know who created it
     const user = await _user2.default.findById(userId);
-    const [playlist] = !user ? res.fail('User Id is not found.') : await _playlist2.default.findOrCreate({ where: { name }, defaults: req.body });
+    const [playlist] = !user ? res.fail('User Id is not found.') : await _playlist2.default.findOrCreate({ where: { name, userId }, defaults: req.body });
     res.success(playlist);
   } catch (error) {
     res.fail(error);
@@ -45,12 +53,65 @@ const createPlaylist = exports.createPlaylist = async (req, res) => {
 };
 
 const deletePlaylist = exports.deletePlaylist = async (req, res) => {
+  const transaction = await _sequelizeConnection.sequelize.transaction();
   try {
     const { id } = req.params;
-    const result = await _playlist2.default.destroy({ where: { id } });
-    result ? res.success('Successfully deleted.') : res.fail('Id is not found.');
+    await _playlist2.default.destroy({ where: { id }, transaction });
+    await _playlistSong2.default.destroy({ where: { playlistId: id }, transaction });
+    transaction.commit();
+    res.success('Successfully deleted.');
+  } catch (error) {
+    transaction.rollback();
+    res.fail(error.message);
+  }
+};
+
+const getSongFromPlaylist = exports.getSongFromPlaylist = async (req, res) => {
+  try {
+    // const { id } = req.params;
+    const { rows, count } = await _playlistSong2.default.findAndCountAll();
+    res.success(rows, { count });
   } catch (error) {
     res.fail(error);
+  }
+};
+
+const removeSongFromPlaylist = exports.removeSongFromPlaylist = async (req, res) => {
+  try {
+    const { id, songId } = req.params;
+    //check playlist Id is existing
+    //count >findOne
+    const playlist = await _playlist2.default.findOne({ attributes: ['id'], where: { id } });
+    //not => invalid playlist
+    if (!playlist) res.fail('Playlist Id is not valid.');
+    //success => check song id in playlistsong
+    const row = await _playlistSong2.default.destroy({ where: { playlistId: id, songId: songId } });
+    //if no check songId again
+    if (!row) return res.fail('Song Id is invalid.');
+    res.success('Successfully deletd.');
+  } catch (error) {
+    res.fail(error);
+  }
+};
+
+const addSongToPlaylist = exports.addSongToPlaylist = async (req, res) => {
+  try {
+    const { status } = req.query;
+    const { id, songId } = req.params;
+    //check if song if existing
+    const [song, playlist] = await Promise.all([_song2.default.findOne({ attributes: ['id'], where: { id: songId, status } }), _playlist2.default.findOne({ attributes: ['id'], where: { id } })]);
+    //if not => return songId is not found
+    if (!song) res.fail('Song is invalid.');
+    if (!playlist) res.fail('Playlist is invalid.');
+    //existing => add to table playlistsong
+    const [{ isNewRecord }] = await _playlistSong2.default.findOrCreate({
+      where: { playlistId: id, songId },
+      defaults: { playlistId: id, songId }
+    });
+    //result._options.isNewRecord =
+    !isNewRecord ? res.success('Song has already added to playlist.') : res.success('Successfully added song to playlist.');
+  } catch (error) {
+    res.fail(error.name);
   }
 };
 //# sourceMappingURL=playlist.api.js.map
