@@ -1,6 +1,7 @@
 import User from '../../models/user';
 import bcrypt from 'bcrypt';
 import {getToken} from '../../common/jwt';
+import stringify from 'json-stringify-safe';
 
 const {SALT} = process.env;
 
@@ -11,12 +12,13 @@ export const registerAuth = async (req, res) => {
     const hash = bcrypt.hashSync(password, +SALT);
     req.body.password = hash;
     //
-    const [user] = await User.findOrCreate({raw: true, where: {username}, defaults: req.body});
-    user.password = undefined;
-    //will include token
-    res.success(user);
+    const [user1] = await User.findOrCreate({where: {username}, defaults: req.body});
+    const payload = {id: user1.id, role: user1.role, username};
+    const user = JSON.parse(stringify(user1));
+    const data = {...user , password: undefined, token: getToken(payload)};
+    res.success(data);
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -29,9 +31,7 @@ export const loginAuth = async (req, res) => {
     user ? !bcrypt.compareSync(password, user.password) ? res.fail('Wrong Password', 400) : {} : res.fail('Username is not found.', 400);
     //if authenticate true
     const payload = {id: user.id, role: user.role, username};
-
-    return user.role === 'admin' ? res.success({...user, password: undefined, token: getToken(payload)}) : res.success({...user, password: undefined});
-
+    res.success({...user, password: undefined, token: getToken(payload)});
   } catch(error){
     res.fail(error);
   }

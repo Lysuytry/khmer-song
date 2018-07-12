@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/common/syncFile.js"],"names":["readFile","path","fs","readFileSync"],"mappings":";;;;;;;AAAA;;;;;;AAEO,MAAMA,8BAAWC,QAAQ;AAC9B,SAAOC,aAAGC,YAAH,CAAgBF,IAAhB,EAAsB,OAAtB,CAAP;AACD,CAFM","file":"syncFile.js","sourcesContent":["import fs from 'fs';\n\nexport const readFile = path => {\n  return fs.readFileSync(path, 'utf-8');\n};\n"]}

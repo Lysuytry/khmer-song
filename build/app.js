@@ -78,7 +78,7 @@ app.use(`${ENDPOINT}/`, _auth2.default);
 app.use(`${ENDPOINT}/admin`, _admin3.checkToken, _admin2.default);
 app.use(`${ENDPOINT}/songs`, _song2.default);
 app.use(`${ENDPOINT}/artists`, _artist2.default);
-app.use(`${ENDPOINT}/playlist`, _playlist2.default);
+app.use(`${ENDPOINT}/playlist`, _admin3.checkTokenForGuest, _playlist2.default);
 app.use(`${ENDPOINT}/productions`, _production2.default);
 
 exports.default = app;

@@ -14,10 +14,15 @@ const Album = _sequelizeConnection.sequelize.define('albums', {
   image: { type: _sequelizeConnection.Sequelize.TEXT, allowNull: true },
   type: { type: _sequelizeConnection.Sequelize.ENUM('new', 'old'), defaultValue: 'new' },
   status: { type: _sequelizeConnection.Sequelize.ENUM('active', 'inactive', 'deleted'), defaultValue: 'active' },
-  productionId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, references: {
+  productionId: {
+    type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED,
+    references: {
       model: 'productions',
       key: 'id'
-    }, onDelete: 'SET NULL', onUpdate: 'SET NULL' },
+    },
+    onDelete: 'SET NULL',
+    onUpdate: 'SET NULL'
+  },
   createdBy: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, allowNull: false },
   updatedBy: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, allowNull: false }
 }, { timestamps: true });

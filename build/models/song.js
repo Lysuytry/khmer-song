@@ -3,17 +3,31 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.rawQuery = exports.updateSong = exports.insertSong = undefined;
+exports.getSongArtistCategory = exports.updateSong = exports.insertSong = undefined;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; //import Playlist from './playlist';
+
+// import Album from './album';
+// import Category from './category';
+
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+var _stringFormat = require('string-format');
+
+var _stringFormat2 = _interopRequireDefault(_stringFormat);
 
 var _sequelizeConnection = require('../common/sequelize-connection');
+
+var _syncFile = require('../common/syncFile');
 
 var _artistSong = require('./artist-song');
 
 var _artistSong2 = _interopRequireDefault(_artistSong);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-//import Playlist from './playlist';
 
 const Song = _sequelizeConnection.sequelize.define('songs', {
   id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
@@ -42,8 +56,7 @@ const Song = _sequelizeConnection.sequelize.define('songs', {
   createdBy: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, allowNull: false },
   updatedBy: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, allowNull: false }
 }, { timestamps: true });
-// import Album from './album';
-// import Category from './category';
+
 const insertSong = exports.insertSong = async data => {
   const transaction = await _sequelizeConnection.sequelize.transaction();
   try {
@@ -96,16 +109,33 @@ const updateSong = exports.updateSong = async body => {
   }
 };
 
-const rawQuery = exports.rawQuery = async id => {
+const getSongArtistCategory = exports.getSongArtistCategory = async data => {
   try {
-    const stringQuery = `SELECT *
-    FROM songs as S INNER JOIN artistSongs as AST ON S.id=AST.songId
-    WHERE S.id=${id}`;
-    // const stringQuery = `SELECT *
-    // FROM album as S LEFT JOIN productions as AST ON S.productionId=AST.Id
-    // WHERE S.id=${id}`;
-    const song = await _sequelizeConnection.sequelize.query(stringQuery);
-    return song;
+    const { limit, offset, name, singerId, type, albumId } = data;
+    const fliterSingerId = singerId ? `AND singerId = :singerId` : ``;
+    const fliterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
+    const fliterSingerType = type ? `AND A.type = :singerType` : ``;
+    const fliterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
+    const allSongSql = _path2.default.join(__dirname, '../../src/query/song/getSongArtistCategory.sql');
+    const allSongCountSql = _path2.default.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql');
+    const preString = (0, _syncFile.readFile)(allSongSql);
+    const preStringCount = (0, _syncFile.readFile)(allSongCountSql);
+    const queryString = (0, _stringFormat2.default)(preString, { fliterSingerId, fliterSingerName, fliterSingerType, fliterAlbumId });
+    const queryStringCount = (0, _stringFormat2.default)(preStringCount, {
+      fliterSingerId,
+      fliterSingerName,
+      fliterSingerType,
+      fliterAlbumId
+    });
+    const replacementSong = { name: `%${name}%`, singerType: type, albumId: albumId, limitValue: limit, offsetValue: offset };
+    const [songs, [count]] = await Promise.all([_sequelizeConnection.sequelize.query(queryString, {
+      replacements: replacementSong,
+      type: _sequelizeConnection.sequelize.QueryTypes.SELECT
+    }), _sequelizeConnection.sequelize.query(queryStringCount, {
+      replacements: replacementSong,
+      type: _sequelizeConnection.sequelize.QueryTypes.SELECT
+    })]);
+    return _extends({ songs }, count);
   } catch (error) {
     throw new Error('Error');
   }

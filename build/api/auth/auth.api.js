@@ -17,6 +17,10 @@ var _bcrypt2 = _interopRequireDefault(_bcrypt);
 
 var _jwt = require('../../common/jwt');
 
+var _jsonStringifySafe = require('json-stringify-safe');
+
+var _jsonStringifySafe2 = _interopRequireDefault(_jsonStringifySafe);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const { SALT } = process.env;
@@ -28,12 +32,13 @@ const registerAuth = exports.registerAuth = async (req, res) => {
     const hash = _bcrypt2.default.hashSync(password, +SALT);
     req.body.password = hash;
     //
-    const [user] = await _user2.default.findOrCreate({ raw: true, where: { username }, defaults: req.body });
-    user.password = undefined;
-    //will include token
-    res.success(user);
+    const [user1] = await _user2.default.findOrCreate({ where: { username }, defaults: req.body });
+    const payload = { id: user1.id, role: user1.role, username };
+    const user = JSON.parse((0, _jsonStringifySafe2.default)(user1));
+    const data = _extends({}, user, { password: undefined, token: (0, _jwt.getToken)(payload) });
+    res.success(data);
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -46,8 +51,7 @@ const loginAuth = exports.loginAuth = async (req, res) => {
     user ? !_bcrypt2.default.compareSync(password, user.password) ? res.fail('Wrong Password', 400) : {} : res.fail('Username is not found.', 400);
     //if authenticate true
     const payload = { id: user.id, role: user.role, username };
-
-    return user.role === 'admin' ? res.success(_extends({}, user, { password: undefined, token: (0, _jwt.getToken)(payload) })) : res.success(_extends({}, user, { password: undefined }));
+    res.success(_extends({}, user, { password: undefined, token: (0, _jwt.getToken)(payload) }));
   } catch (error) {
     res.fail(error);
   }

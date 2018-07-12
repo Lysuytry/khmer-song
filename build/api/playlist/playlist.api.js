@@ -56,8 +56,7 @@ const deletePlaylist = exports.deletePlaylist = async (req, res) => {
   const transaction = await _sequelizeConnection.sequelize.transaction();
   try {
     const { id } = req.params;
-    await _playlist2.default.destroy({ where: { id }, transaction });
-    await _playlistSong2.default.destroy({ where: { playlistId: id }, transaction });
+    await Promise.all([_playlist2.default.destroy({ where: { id }, transaction }), _playlistSong2.default.destroy({ where: { playlistId: id }, transaction })]);
     transaction.commit();
     res.success('Successfully deleted.');
   } catch (error) {
@@ -68,11 +67,12 @@ const deletePlaylist = exports.deletePlaylist = async (req, res) => {
 
 const getSongFromPlaylist = exports.getSongFromPlaylist = async (req, res) => {
   try {
-    // const { id } = req.params;
-    const { rows, count } = await _playlistSong2.default.findAndCountAll();
-    res.success(rows, { count });
+    const { id } = req.params;
+    const { limit, offset } = req.query;
+    const { songs, count } = await (0, _playlist.getSongByPlaylistId)({ id, limit, offset });
+    res.success(songs, { count, limit, offset });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -101,10 +101,11 @@ const addSongToPlaylist = exports.addSongToPlaylist = async (req, res) => {
     //check if song if existing
     const [song, playlist] = await Promise.all([_song2.default.findOne({ attributes: ['id'], where: { id: songId, status } }), _playlist2.default.findOne({ attributes: ['id'], where: { id } })]);
     //if not => return songId is not found
-    if (!song) res.fail('Song is invalid.');
-    if (!playlist) res.fail('Playlist is invalid.');
+    if (!song) return res.fail('Song is invalid.');
+    if (!playlist) return res.fail('Playlist is invalid.');
     //existing => add to table playlistsong
     const [{ isNewRecord }] = await _playlistSong2.default.findOrCreate({
+      raw: true,
       where: { playlistId: id, songId },
       defaults: { playlistId: id, songId }
     });

@@ -1,4 +1,4 @@
-import Playlist from '../../models/playlist';
+import Playlist, {getSongByPlaylistId} from '../../models/playlist';
 import User from '../../models/user';
 import Song from '../../models/song';
 import PlaylistSong from '../../models/playlist-song';
@@ -35,8 +35,10 @@ export const deletePlaylist = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const { id } = req.params;
-    await Playlist.destroy({ where: { id }, transaction});
-    await PlaylistSong.destroy({ where: { playlistId: id }, transaction});
+    await Promise.all([
+      Playlist.destroy({ where: { id }, transaction }),
+      PlaylistSong.destroy({ where: { playlistId: id }, transaction })
+    ]);
     transaction.commit();
     res.success('Successfully deleted.');
   } catch (error) {
@@ -47,11 +49,12 @@ export const deletePlaylist = async (req, res) => {
 
 export const getSongFromPlaylist = async (req, res) => {
   try {
-    // const { id } = req.params;
-    const { rows, count } = await PlaylistSong.findAndCountAll();
-    res.success(rows, { count });
+    const { id } = req.params;
+    const { limit, offset } = req.query;
+    const {songs,count} = await getSongByPlaylistId({id, limit, offset});
+    res.success(songs, {count, limit, offset});
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -83,10 +86,11 @@ export const addSongToPlaylist = async (req, res) => {
       Playlist.findOne({ attributes: ['id'], where: { id } })
     ]);
     //if not => return songId is not found
-    if ( !song ) res.fail('Song is invalid.');
-    if ( !playlist ) res.fail('Playlist is invalid.');
+    if (!song) return res.fail('Song is invalid.');
+    if (!playlist) return res.fail('Playlist is invalid.');
     //existing => add to table playlistsong
     const [{ isNewRecord }] = await PlaylistSong.findOrCreate({
+      raw: true,
       where: { playlistId: id, songId },
       defaults: { playlistId: id, songId }
     });

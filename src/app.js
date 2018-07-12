@@ -12,7 +12,7 @@ import routeSong from './api/song/song.route';
 
 import { fliterQuery } from './common/query';
 //checkfunction is from admin middleware to check token user admin
-import {checkToken} from './api/admin/admin.middleware';
+import {checkToken, checkTokenForGuest} from './api/admin/admin.middleware';
 
 const app = express();
 
@@ -42,7 +42,7 @@ app.use(`${ENDPOINT}/`, routeAuth);
 app.use(`${ENDPOINT}/admin`, checkToken, admin);
 app.use(`${ENDPOINT}/songs`, routeSong);
 app.use(`${ENDPOINT}/artists`, routeArtist);
-app.use(`${ENDPOINT}/playlist`, routePlaylist);
+app.use(`${ENDPOINT}/playlist`, checkTokenForGuest, routePlaylist);
 app.use(`${ENDPOINT}/productions`, routeProduction);
 
 export default app;

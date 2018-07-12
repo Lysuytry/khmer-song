@@ -19,3 +19,20 @@ export const checkToken = (req, res, next) => {
     res.fail('Token is invalid');
   }
 };
+
+export const checkTokenForGuest = (req, res, next) => {
+  try{
+    //send from everywhere
+    const token = req.body.token || req.query.token || req.headers['authorization'];
+    const {status} = req.query;
+    const {id, role, username} = verifyToken(token);
+    //verify user role username and status = active
+    role === 'admin' ? res.success('Only Guest could be access') : verifyUser({id, status, username}, res);
+    //passed verify => next before do that must be assign who will authorize
+    req.body.userId = id;
+    //passed to next()
+    next();
+  } catch(error){
+    res.fail('Token is invalid.');
+  }
+};
