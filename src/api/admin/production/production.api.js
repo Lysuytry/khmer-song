@@ -19,7 +19,7 @@ export const createProduction = async (req, res) => {
     const [production] = await Production.findOrCreate({where: {name}, defaults: req.body});
     res.success(production);
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -37,7 +37,7 @@ export const updateProductionById = async (req, res) => {
     await Production.update(data, {where: {id, 'status': statusQuery}});
     res.success('Successfully updated.');
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -47,7 +47,7 @@ export const deleteProductionById = async (req, res) => {
     const [result] = await Production.update({status: 'inactive'}, {where: {id, status: 'active'}});
     result === 0 ? res.success('Id is not found.') : res.success('Successfully deleted.');
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -58,6 +58,6 @@ export const getProductionById = async (req, res) => {
     const production = await Production.findOne({where: {id, status}});
     res.success(production);
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };

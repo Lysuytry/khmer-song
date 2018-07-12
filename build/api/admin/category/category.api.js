@@ -23,7 +23,7 @@ const getCategoryList = exports.getCategoryList = async (req, res) => {
     const { rows, count } = await _category2.default.findAndCountAll({ where: conditions, limit, offset });
     res.success(rows, { limit, offset, count });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -33,7 +33,7 @@ const createCategory = exports.createCategory = async (req, res) => {
     const [category] = await _category2.default.findOrCreate({ where: { name }, defaults: req.body });
     res.success(category);
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -44,7 +44,7 @@ const getCategoryById = exports.getCategoryById = async (req, res) => {
     const category = await _category2.default.findOne({ where: { id, status } });
     res.success(category);
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -61,7 +61,7 @@ const updateCategoryById = exports.updateCategoryById = async (req, res) => {
     await _category2.default.update(data, { where: { id, status: statusQuery } });
     res.success('Successfully updated.');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -71,7 +71,7 @@ const deleteCategory = exports.deleteCategory = async (req, res) => {
     const [result] = await _category2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
     result === 0 ? res.success('Id is not found.') : res.success('Successfully deleted');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=category.api.js.map

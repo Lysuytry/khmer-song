@@ -1,5 +1,6 @@
 import Album from '../../../models/album';
 import {Op} from '../../../common/sequelize-connection';
+import Production from '../../../models/production';
 
 export const getAlbumList = async (req, res) => {
   try{
@@ -10,7 +11,7 @@ export const getAlbumList = async (req, res) => {
     const {rows, count} = await Album.findAndCountAll({where: conditions, offset, limit});
     res.success(rows, {limit, offset, count});
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -20,7 +21,7 @@ export const createAlbum = async (req, res) => {
     const [album] = await Album.findOrCreate({where: {name}, defaults: req.body});
     res.success(album);
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -31,7 +32,7 @@ export const getAlbumById = async (req, res) => {
     const album = await Album.findOne({where: {id, status} });
     res.success(album);
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -43,6 +44,10 @@ export const updateAlbumById = async (req, res) => {
     name = name ? {name} : {};
     image = image ? {image} : {};
     status = status ? {status} : {};
+
+    const result = productionId ? await Production.findOne({attributes: ['id'], where: {id: productionId}}) : true;
+    if(!result) return res.fail('Production Id is invalid.');
+
     productionId = productionId ? {productionId} : {};
     createdBy = createdBy ? {createdBy} : {};
     updatedBy = updatedBy ? {updatedBy} : {};
@@ -51,7 +56,7 @@ export const updateAlbumById = async (req, res) => {
     await Album.update(data, {where: {id, 'status': statusQuery}});
     res.success('Successfully updated.');
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -61,6 +66,6 @@ export const deletedAlbumById = async (req, res) => {
     const [result] =  await Album.update({status: 'inactive'}, {where: {id, status: 'active'}});
     result === 0 ? res.fail('If is not found') : res.success('Successfully deleted.');
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };

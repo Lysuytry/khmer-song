@@ -25,6 +25,6 @@ export const getAlbumFromProductionById = async (req, res) => {
     const {rows, count} = await Album.findAndCountAll({where: conditions, offset, limit});
     res.success(rows, {limit, offset, count});
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };

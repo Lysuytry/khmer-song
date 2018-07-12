@@ -53,7 +53,7 @@ const loginAuth = exports.loginAuth = async (req, res) => {
     const payload = { id: user.id, role: user.role, username };
     res.success(_extends({}, user, { password: undefined, token: (0, _jwt.getToken)(payload) }));
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -63,7 +63,7 @@ const verifyUser = exports.verifyUser = async (data, res) => {
     const user = await _user2.default.findOne({ where: _extends({}, data) });
     return user ? user : res.fail('Not user');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=auth.api.js.map

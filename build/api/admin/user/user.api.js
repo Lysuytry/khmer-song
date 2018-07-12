@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getUserList = undefined;
 
-var _sequelizeConnection = require('../../../common/sequelize-connection');
-
 var _user = require('../../../models/user');
 
 var _user2 = _interopRequireDefault(_user);
@@ -20,7 +18,7 @@ const getUserList = exports.getUserList = async (req, res) => {
     const { rows, count } = await _user2.default.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=user.api.js.map

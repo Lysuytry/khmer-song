@@ -13,6 +13,10 @@ var _album2 = _interopRequireDefault(_album);
 
 var _sequelizeConnection = require('../../../common/sequelize-connection');
 
+var _production = require('../../../models/production');
+
+var _production2 = _interopRequireDefault(_production);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const getAlbumList = exports.getAlbumList = async (req, res) => {
@@ -24,7 +28,7 @@ const getAlbumList = exports.getAlbumList = async (req, res) => {
     const { rows, count } = await _album2.default.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -34,7 +38,7 @@ const createAlbum = exports.createAlbum = async (req, res) => {
     const [album] = await _album2.default.findOrCreate({ where: { name }, defaults: req.body });
     res.success(album);
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -45,7 +49,7 @@ const getAlbumById = exports.getAlbumById = async (req, res) => {
     const album = await _album2.default.findOne({ where: { id, status } });
     res.success(album);
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -57,6 +61,10 @@ const updateAlbumById = exports.updateAlbumById = async (req, res) => {
     name = name ? { name } : {};
     image = image ? { image } : {};
     status = status ? { status } : {};
+
+    const result = productionId ? await _production2.default.findOne({ attributes: ['id'], where: { id: productionId } }) : true;
+    if (!result) return res.fail('Production Id is invalid.');
+
     productionId = productionId ? { productionId } : {};
     createdBy = createdBy ? { createdBy } : {};
     updatedBy = updatedBy ? { updatedBy } : {};
@@ -65,7 +73,7 @@ const updateAlbumById = exports.updateAlbumById = async (req, res) => {
     await _album2.default.update(data, { where: { id, 'status': statusQuery } });
     res.success('Successfully updated.');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -75,7 +83,7 @@ const deletedAlbumById = exports.deletedAlbumById = async (req, res) => {
     const [result] = await _album2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
     result === 0 ? res.fail('If is not found') : res.success('Successfully deleted.');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=album.api.js.map

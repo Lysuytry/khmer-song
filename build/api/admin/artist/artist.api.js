@@ -23,7 +23,7 @@ const getArtistList = exports.getArtistList = async (req, res) => {
     const { rows, count } = await _artist2.default.findAndCountAll({ where: conditions, limit, offset });
     res.success(rows, { limit, offset, count });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -33,7 +33,7 @@ const createArtist = exports.createArtist = async (req, res) => {
     const [artist] = await _artist2.default.findOrCreate({ where: { name }, defaults: req.body });
     res.success(artist);
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -44,7 +44,7 @@ const getArtistById = exports.getArtistById = async (req, res) => {
     const artist = await _artist2.default.findOne({ where: { id, status } });
     res.success(artist);
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -62,7 +62,7 @@ const updateArtistById = exports.updateArtistById = async (req, res) => {
     await _artist2.default.update(data, { where: { id, status } });
     res.success('Succesfully updated');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -72,7 +72,7 @@ const deletedArtistById = exports.deletedArtistById = async (req, res) => {
     const result = await _artist2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
     result === 1 ? res.success('Successfully deleted.') : res.success('Id not found');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=artist.api.js.map

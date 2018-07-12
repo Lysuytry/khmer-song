@@ -23,7 +23,7 @@ const getArtistList = exports.getArtistList = async (req, res) => {
     const { rows, count } = await _artist2.default.findAndCountAll({ where: conditions, limit, offset });
     res.success(rows, { limit, offset, count });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=artist.api.js.map

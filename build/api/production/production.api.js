@@ -43,7 +43,7 @@ const getAlbumFromProductionById = exports.getAlbumFromProductionById = async (r
     const { rows, count } = await _album2.default.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 //# sourceMappingURL=production.api.js.map

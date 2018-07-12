@@ -72,7 +72,7 @@ export const removeSongFromPlaylist = async (req, res) => {
     if (!row) return res.fail('Song Id is invalid.');
     res.success('Successfully deletd.');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 

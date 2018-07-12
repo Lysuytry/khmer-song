@@ -1,4 +1,3 @@
-import {Op} from '../../../common/sequelize-connection';
 import User from '../../../models/user';
 
 export const getUserList = async (req, res) => {
@@ -8,6 +7,6 @@ export const getUserList = async (req, res) => {
     const {rows, count} = await User.findAndCountAll({where: conditions, offset, limit });
     res.success(rows, {limit, offset, count});
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };

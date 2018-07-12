@@ -37,7 +37,7 @@ const getSongList = exports.getSongList = async (req, res) => {
     const { rows, count } = await _song2.default.findAndCount({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -48,7 +48,7 @@ const getSongById = exports.getSongById = async (req, res) => {
     const song = await _song2.default.findOne({ where: { id, status } });
     song ? res.success(song) : res.success({});
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -58,7 +58,7 @@ const deleteSongById = exports.deleteSongById = async (req, res) => {
     const [result] = await _song2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
     result === 0 ? res.fail('Id is not found.') : res.success('Successfully deleted.');
   } catch (error) {
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 

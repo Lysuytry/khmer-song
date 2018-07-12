@@ -9,6 +9,6 @@ export const getArtistList = async (req, res) => {
     const {rows, count} = await Artist.findAndCountAll({where: conditions, limit, offset});
     res.success(rows, {limit, offset, count});
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };

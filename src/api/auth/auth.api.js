@@ -33,7 +33,7 @@ export const loginAuth = async (req, res) => {
     const payload = {id: user.id, role: user.role, username};
     res.success({...user, password: undefined, token: getToken(payload)});
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
 
@@ -43,6 +43,6 @@ export const verifyUser = async (data, res) => {
     const user = await User.findOne({where: {...data}});
     return user ? user : res.fail('Not user');
   } catch(error){
-    res.fail(error);
+    res.fail(error.message);
   }
 };
