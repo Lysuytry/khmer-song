@@ -24,18 +24,21 @@ const Playlist = sequelize.define(
 
 export const getSongByPlaylistId = async data => {
   try {
-    const { id, limit, offset } = data;
+    const { id, limit, offset, userId } = data;
     const pathQuery = Path.join(__dirname, '../../src/query/playlist/getAllSongInPlaylist.sql');
     const pathCount = Path.join(__dirname, '../../src/query/playlist/countAllSongInPlaylist.sql');
     const querySong = readFile(pathQuery);
     const countSong = readFile(pathCount);
     const replacementsQuery = {
-      replacements: { id: id, limitValue: limit, offsetValue: offset },
+      replacements: { id: id, userId: userId, limitValue: limit, offsetValue: offset },
       type: sequelize.QueryTypes.SELECT
     };
-    const replacementsCount = {replacements: {id: id}, type: sequelize.QueryTypes.SELECT};
-    const [songs, [count] ] = await Promise.all([sequelize.query(querySong, replacementsQuery), sequelize.query(countSong, replacementsCount)]);
-    return {songs, ...count};
+    const replacementsCount = { replacements: { id: id }, type: sequelize.QueryTypes.SELECT };
+    const [songs, [count]] = await Promise.all([
+      sequelize.query(querySong, replacementsQuery),
+      sequelize.query(countSong, replacementsCount)
+    ]);
+    return { songs, ...count };
   } catch (error) {
     throw new Error(error.message);
   }

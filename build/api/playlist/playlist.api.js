@@ -29,10 +29,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const getPlaylist = exports.getPlaylist = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.body;
     const { limit, offset, name } = req.query;
     const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const conditions = _extends({ userId: id }, fliterName);
+    const conditions = _extends({ userId }, fliterName);
     const { rows, count } = await _playlist2.default.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { count, limit, offset });
   } catch (error) {
@@ -56,7 +56,8 @@ const deletePlaylist = exports.deletePlaylist = async (req, res) => {
   const transaction = await _sequelizeConnection.sequelize.transaction();
   try {
     const { id } = req.params;
-    await Promise.all([_playlist2.default.destroy({ where: { id }, transaction }), _playlistSong2.default.destroy({ where: { playlistId: id }, transaction })]);
+    const { userId } = req.body;
+    await Promise.all([_playlist2.default.destroy({ where: { id, userId }, transaction }), _playlistSong2.default.destroy({ where: { playlistId: id }, transaction })]);
     transaction.commit();
     res.success('Successfully deleted.');
   } catch (error) {
@@ -68,8 +69,9 @@ const deletePlaylist = exports.deletePlaylist = async (req, res) => {
 const getSongFromPlaylist = exports.getSongFromPlaylist = async (req, res) => {
   try {
     const { id } = req.params;
+    const { userId } = req.body;
     const { limit, offset } = req.query;
-    const { songs, count } = await (0, _playlist.getSongByPlaylistId)({ id, limit, offset });
+    const { songs, count } = await (0, _playlist.getSongByPlaylistId)({ id, userId, limit, offset });
     res.success(songs, { count, limit, offset });
   } catch (error) {
     res.fail(error.message);
@@ -79,9 +81,10 @@ const getSongFromPlaylist = exports.getSongFromPlaylist = async (req, res) => {
 const removeSongFromPlaylist = exports.removeSongFromPlaylist = async (req, res) => {
   try {
     const { id, songId } = req.params;
+    const { userId } = req.body;
     //check playlist Id is existing
     //count >findOne
-    const playlist = await _playlist2.default.findOne({ attributes: ['id'], where: { id } });
+    const playlist = await _playlist2.default.findOne({ attributes: ['id'], where: { userId, id } });
     //not => invalid playlist
     if (!playlist) res.fail('Playlist Id is not valid.');
     //success => check song id in playlistsong
@@ -98,8 +101,9 @@ const addSongToPlaylist = exports.addSongToPlaylist = async (req, res) => {
   try {
     const { status } = req.query;
     const { id, songId } = req.params;
+    const { userId } = req.body;
     //check if song if existing
-    const [song, playlist] = await Promise.all([_song2.default.findOne({ attributes: ['id'], where: { id: songId, status } }), _playlist2.default.findOne({ attributes: ['id'], where: { id } })]);
+    const [song, playlist] = await Promise.all([_song2.default.findOne({ attributes: ['id'], where: { id: songId, status } }), _playlist2.default.findOne({ attributes: ['id'], where: { userId, id } })]);
     //if not => return songId is not found
     if (!song) return res.fail('Song is invalid.');
     if (!playlist) return res.fail('Playlist is invalid.');

@@ -36,13 +36,13 @@ const Playlist = _sequelizeConnection.sequelize.define('playists', {
 
 const getSongByPlaylistId = exports.getSongByPlaylistId = async data => {
   try {
-    const { id, limit, offset } = data;
+    const { id, limit, offset, userId } = data;
     const pathQuery = _path2.default.join(__dirname, '../../src/query/playlist/getAllSongInPlaylist.sql');
     const pathCount = _path2.default.join(__dirname, '../../src/query/playlist/countAllSongInPlaylist.sql');
     const querySong = (0, _syncFile.readFile)(pathQuery);
     const countSong = (0, _syncFile.readFile)(pathCount);
     const replacementsQuery = {
-      replacements: { id: id, limitValue: limit, offsetValue: offset },
+      replacements: { id: id, userId: userId, limitValue: limit, offsetValue: offset },
       type: _sequelizeConnection.sequelize.QueryTypes.SELECT
     };
     const replacementsCount = { replacements: { id: id }, type: _sequelizeConnection.sequelize.QueryTypes.SELECT };

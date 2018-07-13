@@ -4,10 +4,10 @@ import {validatePlaylistCreating} from './playlist.middleware';
 
 const routePlaylist = Router();
 
+routePlaylist.get('/', getPlaylist);
 routePlaylist.post('/', validatePlaylistCreating, createPlaylist);
-routePlaylist.delete('/:id', deletePlaylist);
 routePlaylist.get('/:id', getSongFromPlaylist);
-routePlaylist.get('/users/:id', getPlaylist);
+routePlaylist.delete('/:id', deletePlaylist);
 routePlaylist.post('/:id/songs/:songId', addSongToPlaylist);
 routePlaylist.delete('/:id/songs/:songId', removeSongFromPlaylist);
 
