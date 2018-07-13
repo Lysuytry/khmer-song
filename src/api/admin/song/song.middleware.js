@@ -20,11 +20,11 @@ const songUpdatingSchema = Joi.object().keys({
 });
 
 export const validateSongCreating = (req, res, next) => {
-  const { name, duration, size, artistIds, albumId, categoryId } = req.body;
-  validator({ name, duration, size, artistIds, albumId, categoryId }, songCreatingSchema, req, res, next);
+  //const { name, duration, size, artistIds, albumId, categoryId } = req.body;
+  validator(req.body, songCreatingSchema, req, res, next);
 };
 
 export const validateSongUpdating = (req, res, next) => {
-  const { name, duration, size, artistIds, albumId, categoryId } = req.body;
-  validator({ name, duration, size, artistIds, albumId, categoryId }, songUpdatingSchema, req, res, next);
+  //const { name, duration, size, artistIds, albumId, categoryId } = req.body;
+  validator(req.body, songUpdatingSchema, req, res, next);
 };

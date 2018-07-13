@@ -32,8 +32,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const getSongList = exports.getSongList = async (req, res) => {
   try {
     const { limit, offset, status, name } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const conditions = _extends({}, fliterName, { status });
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const conditions = _extends({}, filterName, { status });
     const { rows, count } = await _song2.default.findAndCount({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {
@@ -55,7 +55,8 @@ const getSongById = exports.getSongById = async (req, res) => {
 const deleteSongById = exports.deleteSongById = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await _song2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
+    const { updatedBy } = req.authUser;
+    const [result] = await _song2.default.update({ status: 'inactive', updatedBy }, { where: { id, status: 'active' } });
     result === 0 ? res.fail('Id is not found.') : res.success('Successfully deleted.');
   } catch (error) {
     res.fail(error.message);
@@ -65,13 +66,18 @@ const deleteSongById = exports.deleteSongById = async (req, res) => {
 //create with album , category and artist
 const createSong = exports.createSong = async (req, res) => {
   try {
-    const { albumId, categoryId, artistIds, name, duration, size, createdBy, updatedBy } = req.body;
+    const { albumId, categoryId, artistIds, name, duration, size } = req.body;
+    const { updatedBy, createdBy } = req.authUser;
     const { status } = req.query;
-    const fliterArtist = { id: { [_sequelizeConnection.Op.in]: artistIds }, status };
+    const filterArtist = { id: { [_sequelizeConnection.Op.in]: artistIds }, status };
     //check all these folks that are existing or not ...
-    const [hasAlbum, hasCategory, hasArtist] = await Promise.all([_album2.default.findOne({ attributes: ['id'], where: { id: albumId, status } }), _category2.default.findOne({ attributes: ['id'], where: { id: categoryId, status } }), _artist2.default.findAll({ attributes: ['id'], where: fliterArtist })]);
+    const [album, category, artist] = await Promise.all([_album2.default.findOne({ attributes: ['id'], where: { id: albumId, status } }), _category2.default.findOne({ attributes: ['id'], where: { id: categoryId, status } }), _artist2.default.count({ where: filterArtist })]);
+
     //response what wrong with these
-    hasAlbum ? hasCategory ? hasArtist.length == artistIds.length ? {} : res.fail('Artist Id is not found.') : res.fail('Category Id is not found.') : res.fail('Album Id is not found.');
+    if (!album) return res.fail('Album Id is not found.');
+    if (!category) return res.fail('Category Id is not found.');
+    if (artist != artistIds.length) return res.fail('Artist Id is not found.');
+
     //otherwise => insert part
     const song = await (0, _song.insertSong)({ albumId, categoryId, artistIds, name, duration, size, createdBy, updatedBy });
     res.success(song);
@@ -83,27 +89,31 @@ const createSong = exports.createSong = async (req, res) => {
 const updateSongById = exports.updateSongById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { albumId, categoryId, artistIds, name, duration, size, updatedBy } = req.body;
+    const { updatedBy } = req.authUser;
+    const { albumId, categoryId, artistIds, name, duration, size } = req.body;
     //const { status } = req.query;
     //check if song Id is exist or not because I dont want to query sth before check it
     const result = await _song2.default.findOne({ where: { id, status: 'active' } });
     if (!result) res.fail('Song Id is invalid.');
     //if exist => query for update
-    const fliterAlbum = albumId ? _album2.default.findOne({ where: { id: albumId, status: 'active' } }) : {};
-    const fliterCategory = categoryId ? _category2.default.findOne({ where: { id: categoryId, status: 'active' } }) : {};
-    const fliterArtist = artistIds ? _artist2.default.findAll({ where: { id: { [_sequelizeConnection.Op.in]: artistIds }, status: 'active' } }) : {};
+    const filterAlbum = albumId ? _album2.default.findOne({ where: { id: albumId, status: 'active' } }) : {};
+    const filterCategory = categoryId ? _category2.default.findOne({ where: { id: categoryId, status: 'active' } }) : {};
+    const filterArtist = artistIds ? _artist2.default.findAll({ where: { id: { [_sequelizeConnection.Op.in]: artistIds }, status: 'active' } }) : {};
     //if include album , ... => process to check
-    const [hasAlbum = 0, hasCategory = 0, hasArtist = 0] = await Promise.all([fliterAlbum, fliterCategory, fliterArtist]);
-    //response what wrong with these
-    hasAlbum ? hasCategory ? Array.isArray(hasArtist) ? hasArtist.length === artistIds.length ? {} //isArray but donot found some artist id
-    : res.fail('Some artist Id is invalid.') : {} // if no process of that query
-    : res.fail('Category Id is not found.') : res.fail('Album Id is not found.');
+    const [album = 0, category = 0, artist = 0] = await Promise.all([filterAlbum, filterCategory, filterArtist]);
 
-    const fliterName = name ? { name: name } : {};
-    const fliterDuration = duration ? { duration: duration } : {};
-    const fliterSize = size ? { size: size } : {};
+    //response what wrong with these
+    if (!album) return res.fail('Album Id is not found.');
+    if (!category) return res.fail('Category Id is not found.');
+    if (Array.isArray(artist)) {
+      if (artist.length === artistIds.length) return res.fail('Some artist Id is invalid.');
+    }
+
+    const filterName = name ? { name: name } : {};
+    const filterDuration = duration ? { duration: duration } : {};
+    const filterSize = size ? { size: size } : {};
     //for table song need to update
-    const data = _extends({}, fliterName, fliterSize, fliterDuration, fliterAlbum, fliterCategory, { updatedBy });
+    const data = _extends({}, filterName, filterSize, filterDuration, filterAlbum, filterCategory, { updatedBy });
     await (0, _song.updateSong)({ data, id, artistIds });
     res.success('Successfully updated.');
   } catch (error) {

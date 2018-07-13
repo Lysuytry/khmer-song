@@ -15,9 +15,9 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _stringFormat = require('string-format');
+var _stringTemplate = require('string-template');
 
-var _stringFormat2 = _interopRequireDefault(_stringFormat);
+var _stringTemplate2 = _interopRequireDefault(_stringTemplate);
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
@@ -62,7 +62,7 @@ const insertSong = exports.insertSong = async data => {
   try {
     const { artistIds, duration, size, name } = data;
     const conditions = { name, duration, size };
-    console.log(data);
+    //console.log(data);
     //create song with that transaction
     const [song] = await Song.findOrCreate({ where: conditions, defaults: data, transaction });
     //map into one object => (songId, artistId)
@@ -116,18 +116,22 @@ const getSongArtistCategory = exports.getSongArtistCategory = async data => {
     const fliterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
     const fliterSingerType = type ? `AND A.type = :singerType` : ``;
     const fliterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
-    const allSongSql = _path2.default.join(__dirname, '../../src/query/song/getSongArtistCategory.sql');
-    const allSongCountSql = _path2.default.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql');
-    const preString = (0, _syncFile.readFile)(allSongSql);
-    const preStringCount = (0, _syncFile.readFile)(allSongCountSql);
-    const queryString = (0, _stringFormat2.default)(preString, { fliterSingerId, fliterSingerName, fliterSingerType, fliterAlbumId });
-    const queryStringCount = (0, _stringFormat2.default)(preStringCount, {
+    const preString = (0, _syncFile.readFile)(_path2.default.join(__dirname, '../../src/query/song/getSongArtistCategory.sql'));
+    const preStringCount = (0, _syncFile.readFile)(_path2.default.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql'));
+    const queryString = (0, _stringTemplate2.default)(preString, { fliterSingerId, fliterSingerName, fliterSingerType, fliterAlbumId });
+    const queryStringCount = (0, _stringTemplate2.default)(preStringCount, {
       fliterSingerId,
       fliterSingerName,
       fliterSingerType,
       fliterAlbumId
     });
-    const replacementSong = { name: `%${name}%`, singerType: type, albumId: albumId, limitValue: limit, offsetValue: offset };
+    const replacementSong = {
+      name: `%${name}%`,
+      singerType: type,
+      albumId: albumId,
+      limitValue: limit,
+      offsetValue: offset
+    };
     const [songs, [count]] = await Promise.all([_sequelizeConnection.sequelize.query(queryString, {
       replacements: replacementSong,
       type: _sequelizeConnection.sequelize.QueryTypes.SELECT

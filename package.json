@@ -19,7 +19,9 @@
     "mysql2": "^1.5.3",
     "nodemon": "^1.17.5",
     "sequelize": "^4.38.0",
-    "string-format": "^2.0.0"
+    "spellchecker": "^3.4.4",
+    "string-format": "^2.0.0",
+    "string-template": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

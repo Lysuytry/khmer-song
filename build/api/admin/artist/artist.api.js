@@ -18,8 +18,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const getArtistList = exports.getArtistList = async (req, res) => {
   try {
     const { limit, offset, status, name } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const conditions = _extends({}, fliterName, { status });
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const conditions = _extends({}, filterName, { status });
     const { rows, count } = await _artist2.default.findAndCountAll({ where: conditions, limit, offset });
     res.success(rows, { limit, offset, count });
   } catch (error) {
@@ -30,7 +30,8 @@ const getArtistList = exports.getArtistList = async (req, res) => {
 const createArtist = exports.createArtist = async (req, res) => {
   try {
     const { name } = req.body;
-    const [artist] = await _artist2.default.findOrCreate({ where: { name }, defaults: req.body });
+    const { createdBy, updatedBy } = req.authUser;
+    const [artist] = await _artist2.default.findOrCreate({ where: { name }, defaults: _extends({}, req.body, { createdBy, updatedBy }) });
     res.success(artist);
   } catch (error) {
     res.fail(error.message);
@@ -52,15 +53,14 @@ const updateArtistById = exports.updateArtistById = async (req, res) => {
   try {
     const { status } = req.query;
     const { id } = req.params;
-    let { name, type, image, createdBy, updatedBy } = req.body;
+    const { updatedBy } = req.authUser;
+    let { name, type, image } = req.body;
     name = name ? { name } : {};
     type = type ? { type } : {};
     image = image ? { image } : {};
-    createdBy = createdBy ? { createdBy } : {};
-    updatedBy = updatedBy ? { updatedBy } : {};
-    const data = _extends({}, name, type, image, createdBy, updatedBy);
+    const data = _extends({}, name, type, image, { updatedBy });
     await _artist2.default.update(data, { where: { id, status } });
-    res.success('Succesfully updated');
+    res.success('Successfully updated');
   } catch (error) {
     res.fail(error.message);
   }
@@ -69,7 +69,8 @@ const updateArtistById = exports.updateArtistById = async (req, res) => {
 const deletedArtistById = exports.deletedArtistById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await _artist2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
+    const { updatedBy } = req.authUser;
+    const result = await _artist2.default.update({ status: 'inactive', updatedBy }, { where: { id, status: 'active' } });
     result === 1 ? res.success('Successfully deleted.') : res.success('Id not found');
   } catch (error) {
     res.fail(error.message);

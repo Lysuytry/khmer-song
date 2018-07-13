@@ -1,6 +1,6 @@
 //import Playlist from './playlist';
 import path from 'path';
-import format from 'string-format';
+import format from 'string-template';
 import { Sequelize, sequelize } from '../common/sequelize-connection';
 import { readFile } from '../common/syncFile';
 // import Album from './album';
@@ -44,7 +44,7 @@ export const insertSong = async data => {
   try {
     const { artistIds, duration, size, name } = data;
     const conditions = { name, duration, size };
-    console.log(data);
+    //console.log(data);
     //create song with that transaction
     const [song] = await Song.findOrCreate({ where: conditions, defaults: data, transaction });
     //map into one object => (songId, artistId)
@@ -101,10 +101,8 @@ export const getSongArtistCategory = async data => {
     const fliterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
     const fliterSingerType = type ? `AND A.type = :singerType` : ``;
     const fliterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
-    const allSongSql = path.join(__dirname, '../../src/query/song/getSongArtistCategory.sql');
-    const allSongCountSql = path.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql');
-    const preString = readFile(allSongSql);
-    const preStringCount = readFile(allSongCountSql);
+    const preString = readFile(path.join(__dirname, '../../src/query/song/getSongArtistCategory.sql'));
+    const preStringCount = readFile(path.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql'));
     const queryString = format(preString, { fliterSingerId, fliterSingerName, fliterSingerType, fliterAlbumId });
     const queryStringCount = format(preStringCount, {
       fliterSingerId,
@@ -112,8 +110,14 @@ export const getSongArtistCategory = async data => {
       fliterSingerType,
       fliterAlbumId
     });
-    const replacementSong = { name: `%${name}%`, singerType: type, albumId: albumId, limitValue: limit, offsetValue: offset };
-    const [songs, [count] ] = await Promise.all([
+    const replacementSong = {
+      name: `%${name}%`,
+      singerType: type,
+      albumId: albumId,
+      limitValue: limit,
+      offsetValue: offset
+    };
+    const [songs, [count]] = await Promise.all([
       sequelize.query(queryString, {
         replacements: replacementSong,
         type: sequelize.QueryTypes.SELECT

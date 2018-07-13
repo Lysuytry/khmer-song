@@ -18,8 +18,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const getArtistList = exports.getArtistList = async (req, res) => {
   try {
     const { limit, offset, status, name } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const conditions = _extends({}, fliterName, { status });
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const conditions = _extends({}, filterName, { status });
     const { rows, count } = await _artist2.default.findAndCountAll({ where: conditions, limit, offset });
     res.success(rows, { limit, offset, count });
   } catch (error) {

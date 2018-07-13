@@ -2,17 +2,19 @@ import {verifyToken} from '../../common/jwt';
 import {verifyUser} from '../auth/auth.api';
 //verifyUser is a function used for verify user
 
-export const checkToken = (req, res, next) => {
+export const checkToken = async (req, res, next) => {
   try{
     //send from everywhere
     const token = req.body.token || req.query.token || req.headers['authorization'];
     const {status} = req.query;
     const {id, role, username} = verifyToken(token);
     //verify user role username and status = active
-    role === 'guest' ? res.success('Only admin could be access') : verifyUser({id, status, username}, res);
+    if(role === 'guest') return res.fail('Only admin could be access', 403);
+    const user = await verifyUser({id, status, username}, res);
     //passed verify => next before do that must be assign who will authorize
-    req.body.updatedBy = id;
-    req.body.createdBy = id;
+    req.authUser = user;
+    req.authUser.updatedBy = user.id;
+    req.authUser.createdBy = user.id;
     //passed to next()
     next();
   } catch(error){
@@ -20,16 +22,19 @@ export const checkToken = (req, res, next) => {
   }
 };
 
-export const checkTokenForGuest = (req, res, next) => {
+export const checkTokenForGuest = async (req, res, next) => {
   try{
     //send from everywhere
     const token = req.body.token || req.query.token || req.headers['authorization'];
     const {status} = req.query;
     const {id, role, username} = verifyToken(token);
     //verify user role username and status = active
-    role === 'admin' ? res.success('Only Guest could be access') : verifyUser({id, status, username}, res);
+    if(role === 'admin') return res.fail('Unauthorized', 403);
+    const user = verifyUser({id, status, username}, res);
     //passed verify => next before do that must be assign who will authorize
-    req.body.userId = id;
+    req.authUser = user;
+    req.authUser.updatedBy = user.id;
+    req.authUser.createdBy = user.id;
     //passed to next()
     next();
   } catch(error){

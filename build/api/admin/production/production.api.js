@@ -18,8 +18,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const getProductionList = exports.getProductionList = async (req, res) => {
   try {
     const { limit, offset, status, name } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const conditions = _extends({}, fliterName, { status });
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const conditions = _extends({}, filterName, { status });
     const { rows, count } = await _production2.default.findAndCountAll({ where: conditions, limit, offset });
     res.success(rows, { limit, offset, count });
   } catch (error) {
@@ -30,7 +30,8 @@ const getProductionList = exports.getProductionList = async (req, res) => {
 const createProduction = exports.createProduction = async (req, res) => {
   try {
     const { name } = req.body;
-    const [production] = await _production2.default.findOrCreate({ where: { name }, defaults: req.body });
+    const { createdBy, updatedBy } = req.authUser;
+    const [production] = await _production2.default.findOrCreate({ where: { name }, defaults: _extends({}, req.body, { createdBy, updatedBy }) });
     res.success(production);
   } catch (error) {
     res.fail(error.message);
@@ -41,13 +42,13 @@ const updateProductionById = exports.updateProductionById = async (req, res) => 
   try {
     const { id } = req.params;
     const statusQuery = req.query.status;
-    let { name, logo, status, updatedBy } = req.body;
+    let { name, logo, status } = req.body;
+    const { updatedBy } = req.authUser;
     name = name ? { name } : {};
     logo = logo ? { logo } : {};
     //createdBy = createdBy ? {createdBy} : {};
-    updatedBy = updatedBy ? { updatedBy } : {};
     status = status ? { status } : {};
-    const data = _extends({}, name, logo, status, updatedBy);
+    const data = _extends({}, name, logo, status, { updatedBy });
     await _production2.default.update(data, { where: { id, 'status': statusQuery } });
     res.success('Successfully updated.');
   } catch (error) {
@@ -58,7 +59,8 @@ const updateProductionById = exports.updateProductionById = async (req, res) => 
 const deleteProductionById = exports.deleteProductionById = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await _production2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
+    const { updatedBy } = req.authUser;
+    const [result] = await _production2.default.update({ status: 'inactive', updatedBy }, { where: { id, status: 'active' } });
     result === 0 ? res.success('Id is not found.') : res.success('Successfully deleted.');
   } catch (error) {
     res.fail(error.message);

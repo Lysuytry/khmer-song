@@ -24,8 +24,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const getProductionList = exports.getProductionList = async (req, res) => {
   try {
     const { limit, offset, status, name } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const conditions = _extends({}, fliterName, { status });
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const conditions = _extends({}, filterName, { status });
     const { rows, count } = await _production2.default.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {
@@ -37,9 +37,9 @@ const getAlbumFromProductionById = exports.getAlbumFromProductionById = async (r
   try {
     const { id } = req.params;
     const { limit, offset, status, name } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const fliterProductionId = { productionId: id };
-    const conditions = _extends({}, fliterProductionId, fliterName, { status });
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const filterProductionId = { productionId: id };
+    const conditions = _extends({}, filterProductionId, filterName, { status });
     const { rows, count } = await _album2.default.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {

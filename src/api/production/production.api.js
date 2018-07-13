@@ -6,8 +6,8 @@ import Production from '../../models/production';
 export const getProductionList = async (req, res) => {
   try{
     const {limit, offset, status, name} = req.query;
-    const fliterName = name ? {name: { [Op.like]: `%${name}%`}} : {};
-    const conditions = {...fliterName, status};
+    const filterName = name ? {name: { [Op.like]: `%${name}%`}} : {};
+    const conditions = {...filterName, status};
     const {rows, count} = await Production.findAndCountAll({where: conditions, offset, limit});
     res.success(rows, {limit, offset, count});
   } catch(error){
@@ -19,9 +19,9 @@ export const getAlbumFromProductionById = async (req, res) => {
   try{
     const {id} = req.params;
     const {limit, offset, status, name} = req.query;
-    const fliterName = name ? {name: { [Op.like]: `%${name}%` }} : {};
-    const fliterProductionId = {productionId: id};
-    const conditions = {...fliterProductionId, ...fliterName, status};
+    const filterName = name ? {name: { [Op.like]: `%${name}%` }} : {};
+    const filterProductionId = {productionId: id};
+    const conditions = {...filterProductionId, ...filterName, status};
     const {rows, count} = await Album.findAndCountAll({where: conditions, offset, limit});
     res.success(rows, {limit, offset, count});
   } catch(error){

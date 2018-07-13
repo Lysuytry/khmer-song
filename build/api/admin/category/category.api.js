@@ -18,8 +18,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const getCategoryList = exports.getCategoryList = async (req, res) => {
   try {
     const { limit, offset, status, name } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const conditions = _extends({}, fliterName, { status });
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const conditions = _extends({}, filterName, { status });
     const { rows, count } = await _category2.default.findAndCountAll({ where: conditions, limit, offset });
     res.success(rows, { limit, offset, count });
   } catch (error) {
@@ -30,7 +30,11 @@ const getCategoryList = exports.getCategoryList = async (req, res) => {
 const createCategory = exports.createCategory = async (req, res) => {
   try {
     const { name } = req.body;
-    const [category] = await _category2.default.findOrCreate({ where: { name }, defaults: req.body });
+    const { updatedBy, createdBy } = req.authUser;
+    const [category] = await _category2.default.findOrCreate({
+      where: { name },
+      defaults: _extends({}, req.body, { createdBy, updatedBy })
+    });
     res.success(category);
   } catch (error) {
     res.fail(error.message);
@@ -52,12 +56,12 @@ const updateCategoryById = exports.updateCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
     const statusQuery = req.query.status;
-    let { name, status, createdBy, updatedBy } = req.body;
+    const { updatedBy } = req.authUser;
+    let { name, status } = req.body;
     name ? { name } : {};
-    createdBy ? { createdBy } : {};
     updatedBy ? { updatedBy } : {};
     status ? { status } : {};
-    const data = _extends({}, name, status, createdBy, updatedBy);
+    const data = _extends({}, name, status, { updatedBy });
     await _category2.default.update(data, { where: { id, status: statusQuery } });
     res.success('Successfully updated.');
   } catch (error) {
@@ -68,7 +72,8 @@ const updateCategoryById = exports.updateCategoryById = async (req, res) => {
 const deleteCategory = exports.deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await _category2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
+    const { updatedBy } = req.authUser;
+    const [result] = await _category2.default.update({ status: 'inactive', updatedBy }, { where: { id, status: 'active' } });
     result === 0 ? res.success('Id is not found.') : res.success('Successfully deleted');
   } catch (error) {
     res.fail(error.message);

@@ -32,12 +32,12 @@ const songUpdatingSchema = _joi2.default.object().keys({
 });
 
 const validateSongCreating = exports.validateSongCreating = (req, res, next) => {
-  const { name, duration, size, artistIds, albumId, categoryId } = req.body;
-  (0, _validator.validator)({ name, duration, size, artistIds, albumId, categoryId }, songCreatingSchema, req, res, next);
+  //const { name, duration, size, artistIds, albumId, categoryId } = req.body;
+  (0, _validator.validator)(req.body, songCreatingSchema, req, res, next);
 };
 
 const validateSongUpdating = exports.validateSongUpdating = (req, res, next) => {
-  const { name, duration, size, artistIds, albumId, categoryId } = req.body;
-  (0, _validator.validator)({ name, duration, size, artistIds, albumId, categoryId }, songUpdatingSchema, req, res, next);
+  //const { name, duration, size, artistIds, albumId, categoryId } = req.body;
+  (0, _validator.validator)(req.body, songUpdatingSchema, req, res, next);
 };
 //# sourceMappingURL=song.middleware.js.map

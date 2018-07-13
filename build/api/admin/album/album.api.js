@@ -22,9 +22,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const getAlbumList = exports.getAlbumList = async (req, res) => {
   try {
     const { limit, offset, status, name, type } = req.query;
-    const fliterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
-    const fliterType = type ? { type } : {};
-    const conditions = _extends({}, fliterName, { status }, fliterType);
+    const filterName = name ? { name: { [_sequelizeConnection.Op.like]: `%${name}%` } } : {};
+    const filterType = type ? { type } : {};
+    const conditions = _extends({}, filterName, { status }, filterType);
     const { rows, count } = await _album2.default.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { limit, offset, count });
   } catch (error) {
@@ -35,7 +35,8 @@ const getAlbumList = exports.getAlbumList = async (req, res) => {
 const createAlbum = exports.createAlbum = async (req, res) => {
   try {
     const { name } = req.body;
-    const [album] = await _album2.default.findOrCreate({ where: { name }, defaults: req.body });
+    const { createdBy, updatedBy } = req.authUser;
+    const [album] = await _album2.default.findOrCreate({ where: { name }, defaults: _extends({}, req.body, { createdBy, updatedBy }) });
     res.success(album);
   } catch (error) {
     res.fail(error.message);
@@ -57,7 +58,8 @@ const updateAlbumById = exports.updateAlbumById = async (req, res) => {
   try {
     const { id } = req.params;
     const statusQuery = req.query.status;
-    let { name, image, status, productionId, createdBy, updatedBy, type } = req.body;
+    const { updatedBy } = req.authUser;
+    let { name, image, status, productionId, type } = req.body;
     name = name ? { name } : {};
     image = image ? { image } : {};
     status = status ? { status } : {};
@@ -66,10 +68,8 @@ const updateAlbumById = exports.updateAlbumById = async (req, res) => {
     if (!result) return res.fail('Production Id is invalid.');
 
     productionId = productionId ? { productionId } : {};
-    createdBy = createdBy ? { createdBy } : {};
-    updatedBy = updatedBy ? { updatedBy } : {};
     type = type ? { type } : {};
-    const data = _extends({}, name, image, status, productionId, createdBy, updatedBy, type);
+    const data = _extends({}, name, image, status, productionId, { updatedBy }, type);
     await _album2.default.update(data, { where: { id, 'status': statusQuery } });
     res.success('Successfully updated.');
   } catch (error) {
@@ -80,7 +80,8 @@ const updateAlbumById = exports.updateAlbumById = async (req, res) => {
 const deletedAlbumById = exports.deletedAlbumById = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await _album2.default.update({ status: 'inactive' }, { where: { id, status: 'active' } });
+    const { updatedBy } = req.authUser;
+    const [result] = await _album2.default.update({ status: 'inactive', updatedBy }, { where: { id, status: 'active' } });
     result === 0 ? res.fail('If is not found') : res.success('Successfully deleted.');
   } catch (error) {
     res.fail(error.message);

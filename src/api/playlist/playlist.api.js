@@ -8,8 +8,8 @@ export const getPlaylist = async (req, res) => {
   try {
     const { userId } = req.body;
     const { limit, offset, name } = req.query;
-    const fliterName = name ? { name: { [Op.like]: `%${name}%` } } : {};
-    const conditions = { userId, ...fliterName };
+    const filterName = name ? { name: { [Op.like]: `%${name}%` } } : {};
+    const conditions = { userId, ...filterName };
     const { rows, count } = await Playlist.findAndCountAll({ where: conditions, offset, limit });
     res.success(rows, { count, limit, offset });
   } catch (error) {
@@ -19,7 +19,8 @@ export const getPlaylist = async (req, res) => {
 
 export const createPlaylist = async (req, res) => {
   try {
-    const { name, userId } = req.body;
+    const { name } = req.body;
+    const userId = req.authUer.id;
     //we must know who created it
     const user = await User.findById(userId);
     const [playlist] = !user
@@ -35,7 +36,7 @@ export const deletePlaylist = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const { id } = req.params;
-    const { userId } = req.body;
+    const userId = req.authUer.id;
     await Promise.all([
       Playlist.destroy({ where: { id, userId }, transaction }),
       PlaylistSong.destroy({ where: { playlistId: id }, transaction })
@@ -51,7 +52,7 @@ export const deletePlaylist = async (req, res) => {
 export const getSongFromPlaylist = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.body;
+    const userId = req.authUer.id;
     const { limit, offset } = req.query;
     const {songs,count} = await getSongByPlaylistId({id, userId, limit, offset});
     res.success(songs, {count, limit, offset});
@@ -63,7 +64,7 @@ export const getSongFromPlaylist = async (req, res) => {
 export const removeSongFromPlaylist = async (req, res) => {
   try {
     const { id, songId } = req.params;
-    const { userId } = req.body;
+    const userId = req.authUer.id;
     //check playlist Id is existing
     //count >findOne
     const playlist = await Playlist.findOne({ attributes: ['id'], where: { userId, id } });
@@ -83,7 +84,7 @@ export const addSongToPlaylist = async (req, res) => {
   try {
     const { status } = req.query;
     const { id, songId } = req.params;
-    const { userId } = req.body;
+    const userId = req.authUer.id;
     //check if song if existing
     const [song, playlist] = await Promise.all([
       Song.findOne({ attributes: ['id'], where: { id: songId, status } }),

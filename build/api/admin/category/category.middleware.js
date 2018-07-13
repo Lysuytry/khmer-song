@@ -15,25 +15,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const categoryCreatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string().required(),
-  status: _joi2.default.string(),
-  createdBy: _joi2.default.number(),
-  updatedBy: _joi2.default.number()
+  status: _joi2.default.string()
 });
 
 const categoryUpdatingSchema = _joi2.default.object().keys({
   name: _joi2.default.string(),
-  status: _joi2.default.string(),
-  createdBy: _joi2.default.number(),
-  updatedBy: _joi2.default.number()
+  status: _joi2.default.string()
 });
 
 const validatCategoryCreating = exports.validatCategoryCreating = (req, res, next) => {
-  const { name, status, createdBy, updatedBy } = req.body;
-  (0, _validator.validator)({ name, status, createdBy, updatedBy }, categoryCreatingSchema, req, res, next);
+  //const {name, status, createdBy, updatedBy} = req.body;
+  (0, _validator.validator)(req.body, categoryCreatingSchema, req, res, next);
 };
 
 const validatCategoryUpdating = exports.validatCategoryUpdating = (req, res, next) => {
-  const { name, status, createdBy, updatedBy } = req.body;
-  (0, _validator.validator)({ name, status, createdBy, updatedBy }, categoryUpdatingSchema, req, res, next);
+  //const {name, status, createdBy, updatedBy} = req.body;
+  (0, _validator.validator)(req.body, categoryUpdatingSchema, req, res, next);
 };
 //# sourceMappingURL=category.middleware.js.map
