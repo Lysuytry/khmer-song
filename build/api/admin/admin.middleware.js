@@ -39,7 +39,7 @@ const checkTokenForGuest = exports.checkTokenForGuest = async (req, res, next) =
     const { id, role, username } = (0, _jwt.verifyToken)(token);
     //verify user role username and status = active
     if (role === 'admin') return res.fail('Unauthorized', 403);
-    const user = (0, _auth.verifyUser)({ id, status, username }, res);
+    const user = await (0, _auth.verifyUser)({ id, status, username }, res);
     //passed verify => next before do that must be assign who will authorize
     req.authUser = user;
     req.authUser.updatedBy = user.id;

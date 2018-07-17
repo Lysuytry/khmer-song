@@ -70,19 +70,19 @@ export const updateSong = async body => {
   try {
     const { data, id, artistIds } = body;
     let artistSongs;
-    let fliterArtistSong = {};
+    let filterArtistSong = {};
     //check if they provide artistIds to update or not
     if (artistIds) {
       artistSongs = artistIds.map(artistId => ({
         songId: id,
         artistId: artistId
       }));
-      fliterArtistSong = ArtistSong.destroy({ where: { songId: id }, transaction });
+      filterArtistSong = ArtistSong.destroy({ where: { songId: id }, transaction });
     }
     //if have update => 2 process otherwise only once process
     const [song] = await Promise.all([
       Song.update(data, { where: { id, status: 'active' }, transaction }),
-      fliterArtistSong
+      filterArtistSong
     ]);
     //check again
     if (artistIds) await ArtistSong.bulkCreate(artistSongs, { transaction });
@@ -97,18 +97,18 @@ export const updateSong = async body => {
 export const getSongArtistCategory = async data => {
   try {
     const { limit, offset, name, singerId, type, albumId } = data;
-    const fliterSingerId = singerId ? `AND singerId = :singerId` : ``;
-    const fliterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
-    const fliterSingerType = type ? `AND A.type = :singerType` : ``;
-    const fliterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
+    const filterSingerId = singerId ? `AND singerId = :singerId` : ``;
+    const filterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
+    const filterSingerType = type ? `AND A.type = :singerType` : ``;
+    const filterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
     const preString = readFile(path.join(__dirname, '../../src/query/song/getSongArtistCategory.sql'));
     const preStringCount = readFile(path.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql'));
-    const queryString = format(preString, { fliterSingerId, fliterSingerName, fliterSingerType, fliterAlbumId });
+    const queryString = format(preString, { filterSingerId, filterSingerName, filterSingerType, filterAlbumId });
     const queryStringCount = format(preStringCount, {
-      fliterSingerId,
-      fliterSingerName,
-      fliterSingerType,
-      fliterAlbumId
+      filterSingerId,
+      filterSingerName,
+      filterSingerType,
+      filterAlbumId
     });
     const replacementSong = {
       name: `%${name}%`,

@@ -42,6 +42,10 @@ var _song = require('./api/song/song.route');
 
 var _song2 = _interopRequireDefault(_song);
 
+var _user = require('./api/user/user.route');
+
+var _user2 = _interopRequireDefault(_user);
+
 var _query = require('./common/query');
 
 var _admin3 = require('./api/admin/admin.middleware');
@@ -60,14 +64,14 @@ app.use(_bodyParser2.default.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   //bind query
-  (0, _query.fliterQuery)(req);
+  (0, _query.filterQuery)(req);
   //for response success
   res.success = (data, options, code = 200) => {
     return typeof data === 'object' ? options ? res.status(code).json({ data, options }) : res.status(code).json(data) : res.status(code).json({ message: data });
   };
   //for response error
   res.fail = (message, code = 500) => {
-    console.log(message.statck);
+    console.log(message);
     return res.status(code).json({ message });
   };
   //parse to next
@@ -77,6 +81,7 @@ app.use((req, res, next) => {
 app.use(`${ENDPOINT}/`, _auth2.default);
 app.use(`${ENDPOINT}/admin`, _admin3.checkToken, _admin2.default);
 app.use(`${ENDPOINT}/songs`, _song2.default);
+app.use(`${ENDPOINT}/users`, _admin3.checkTokenForGuest, _user2.default);
 app.use(`${ENDPOINT}/artists`, _artist2.default);
 app.use(`${ENDPOINT}/playlist`, _admin3.checkTokenForGuest, _playlist2.default);
 app.use(`${ENDPOINT}/productions`, _production2.default);

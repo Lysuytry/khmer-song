@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import {getUserList} from './user.api';
+import {getListUser} from './user.api';
 
 const routeUser = Router();
 
-routeUser.get('/', getUserList);
+routeUser.get('/', getListUser);
 
 export default routeUser;

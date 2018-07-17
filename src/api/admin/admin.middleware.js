@@ -30,7 +30,7 @@ export const checkTokenForGuest = async (req, res, next) => {
     const {id, role, username} = verifyToken(token);
     //verify user role username and status = active
     if(role === 'admin') return res.fail('Unauthorized', 403);
-    const user = verifyUser({id, status, username}, res);
+    const user = await verifyUser({id, status, username}, res);
     //passed verify => next before do that must be assign who will authorize
     req.authUser = user;
     req.authUser.updatedBy = user.id;

@@ -88,17 +88,17 @@ const updateSong = exports.updateSong = async body => {
   try {
     const { data, id, artistIds } = body;
     let artistSongs;
-    let fliterArtistSong = {};
+    let filterArtistSong = {};
     //check if they provide artistIds to update or not
     if (artistIds) {
       artistSongs = artistIds.map(artistId => ({
         songId: id,
         artistId: artistId
       }));
-      fliterArtistSong = _artistSong2.default.destroy({ where: { songId: id }, transaction });
+      filterArtistSong = _artistSong2.default.destroy({ where: { songId: id }, transaction });
     }
     //if have update => 2 process otherwise only once process
-    const [song] = await Promise.all([Song.update(data, { where: { id, status: 'active' }, transaction }), fliterArtistSong]);
+    const [song] = await Promise.all([Song.update(data, { where: { id, status: 'active' }, transaction }), filterArtistSong]);
     //check again
     if (artistIds) await _artistSong2.default.bulkCreate(artistSongs, { transaction });
     transaction.commit();
@@ -112,18 +112,18 @@ const updateSong = exports.updateSong = async body => {
 const getSongArtistCategory = exports.getSongArtistCategory = async data => {
   try {
     const { limit, offset, name, singerId, type, albumId } = data;
-    const fliterSingerId = singerId ? `AND singerId = :singerId` : ``;
-    const fliterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
-    const fliterSingerType = type ? `AND A.type = :singerType` : ``;
-    const fliterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
+    const filterSingerId = singerId ? `AND singerId = :singerId` : ``;
+    const filterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
+    const filterSingerType = type ? `AND A.type = :singerType` : ``;
+    const filterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
     const preString = (0, _syncFile.readFile)(_path2.default.join(__dirname, '../../src/query/song/getSongArtistCategory.sql'));
     const preStringCount = (0, _syncFile.readFile)(_path2.default.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql'));
-    const queryString = (0, _stringTemplate2.default)(preString, { fliterSingerId, fliterSingerName, fliterSingerType, fliterAlbumId });
+    const queryString = (0, _stringTemplate2.default)(preString, { filterSingerId, filterSingerName, filterSingerType, filterAlbumId });
     const queryStringCount = (0, _stringTemplate2.default)(preStringCount, {
-      fliterSingerId,
-      fliterSingerName,
-      fliterSingerType,
-      fliterAlbumId
+      filterSingerId,
+      filterSingerName,
+      filterSingerType,
+      filterAlbumId
     });
     const replacementSong = {
       name: `%${name}%`,
