@@ -25,7 +25,7 @@ _app2.default.use((err, req, res, next) => {
   return res.status(err.status || 500).json(err);
 });
 
-//io.of('/api/v1/rooms').on('connection', chatHandler);
+io.of('/api/v1/online').on('connection', _socketHandler.onlineHandler);
 io.of('/api/v1/chatroom').on('connection', _socketHandler.chatHandler);
 
 server.listen(PORT, () => {

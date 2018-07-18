@@ -1,5 +1,5 @@
 import app from './app';
-import {chatHandler} from './socket.io/socket-handler';
+import {chatHandler, onlineHandler} from './socket.io/socket-handler';
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
@@ -18,7 +18,7 @@ app.use((err, req, res, next) => {
   return res.status(err.status || 500).json(err);
 });
 
-//io.of('/api/v1/rooms').on('connection', chatHandler);
+io.of('/api/v1/online').on('connection', onlineHandler);
 io.of('/api/v1/chatroom').on('connection', chatHandler);
 
 server.listen(PORT, () => {

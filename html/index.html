@@ -65,8 +65,9 @@
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
     $(function () {
+      var old ;
       var socket = io('http://localhost:3000/api/v1/chatroom');
-
+      var online = io('http://localhost:3000/api/v1/online');
       //first query
       const token = getParameterByName('token');
       const url = 'http://localhost:3000/api/v1/rooms';
@@ -104,9 +105,18 @@
 
       socket.on('addMessage', function (msg) {
         const { to, from, messages } = msg;
-        if(to.length == 36) $('#to').val(to);
+        if(!old) old = from;
+        if(old !== from) $('#messages').children().remove();
+        if (to.length == 36) $('#to').val(to);
         else $('#to').val(from);
         $('#messages').append($('<li>').text('\t\t' + messages));
+      });
+
+      online.on('updateOnline', users => {
+        $('#online').children().remove();
+        users.forEach(item => {
+          $('#online').append($('<li>').text('\t\t' + item.id));
+        });
       });
 
       function getParameterByName(name, url) {
@@ -164,6 +174,7 @@
             $('#info').append('ID : \t' + id + '\t').append('\tUsername: \t\t' + username);
             $('#from').val(id);
             socket.emit('join', id);
+            online.emit('online', id);
             //socket.emit('reload', channel);
             //socket.emit('online', { channel, token });
             // var $title = $('<h1>').text(data.talks[0].talk_title);
@@ -199,11 +210,17 @@
       <input type="text" id="to" />
     </div>
     <div class="col-sm-4">
-      <button id="createRoom" type="button" class="btn btn-primary">Create Room</button>
-      <button id="addUserToRoom" type="button" class="btn btn-primary">Add User to a room</button>
+      <p>Online List : </p>
+      <ul id="online"></ul>
+      <!--<button id="createRoom" type="button" class="btn btn-primary">Create Room</button>
+      <button id="addUserToRoom" type="button" class="btn btn-primary">Add User to a room</button>-->
     </div>
   </div>
-  <ul id="messages"></ul>
+  <div class="row">
+    <div class="col-sm-9">
+      <ul id="messages"></ul>
+    </div>
+  </div>
   <form action="">
     <input id="m" autocomplete="off" />
     <button>Send</button>

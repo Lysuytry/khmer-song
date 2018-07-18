@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.joinAllChatRoom = exports.getRoomChat = exports.deleteRoomChatById = exports.getRoomChatById = exports.getRoomList = exports.getRoomById = exports.addUserToRoom = exports.createRoom = undefined;
+exports.joinAllChatRoom = exports.getRoomChat = exports.deleteRoomChatById = exports.getRoomChatById = exports.getRoomList = exports.getRoomById = exports.getListUserInRoom = exports.addUserToRoom = exports.createRoom = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -79,6 +79,16 @@ const addUserToRoom = exports.addUserToRoom = async (req, res) => {
     //if matched => add user into the room
     await (0, _room.addUser)({ friendIds, roomId });
     return res.success('Successfully added a user to a room.');
+  } catch (error) {
+    res.fail(error);
+  }
+};
+
+const getListUserInRoom = exports.getListUserInRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows, count } = await _roomUser2.default.findAndCountAll({ attributes: ['userId'], where: { roomId: id } });
+    res.success(rows, { count });
   } catch (error) {
     res.fail(error);
   }

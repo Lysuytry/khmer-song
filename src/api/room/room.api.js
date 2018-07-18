@@ -65,6 +65,16 @@ export const addUserToRoom = async (req, res) => {
   }
 };
 
+export const getListUserInRoom = async (req, res) => {
+  try{
+    const { id } = req.params;
+    const {rows, count} = await RoomUser.findAndCountAll({ attributes: ['userId'], where: { roomId: id } });
+    res.success(rows, {count});
+  } catch(error){
+    res.fail(error);
+  }
+};
+
 export const getRoomById = async data => {
   try {
     const { id } = data;
