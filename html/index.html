@@ -104,7 +104,7 @@
 
       socket.on('addMessage', function (msg) {
         const { to, from, messages } = msg;
-        if(typeof to === 'string') $('#to').val(to);
+        if(to.length == 36) $('#to').val(to);
         else $('#to').val(from);
         $('#messages').append($('<li>').text('\t\t' + messages));
       });
