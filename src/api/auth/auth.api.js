@@ -2,8 +2,6 @@ import User from '../../models/user';
 import bcrypt from 'bcrypt';
 import { getToken } from '../../common/jwt';
 import stringify from 'json-stringify-safe';
-//import randomstring from 'randomstring';
-//import { sendEMail } from '../../common/send-mail';
 
 const { SALT } = process.env;
 

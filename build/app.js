@@ -46,6 +46,10 @@ var _user = require('./api/user/user.route');
 
 var _user2 = _interopRequireDefault(_user);
 
+var _room = require('./api/room/room.route');
+
+var _room2 = _interopRequireDefault(_room);
+
 var _query = require('./common/query');
 
 var _admin3 = require('./api/admin/admin.middleware');
@@ -80,6 +84,7 @@ app.use((req, res, next) => {
 
 app.use(`${ENDPOINT}/`, _auth2.default);
 app.use(`${ENDPOINT}/admin`, _admin3.checkToken, _admin2.default);
+app.use(`${ENDPOINT}/rooms`, _admin3.checkTokenForGuest, _room2.default);
 app.use(`${ENDPOINT}/songs`, _song2.default);
 app.use(`${ENDPOINT}/users`, _admin3.checkTokenForGuest, _user2.default);
 app.use(`${ENDPOINT}/artists`, _artist2.default);

@@ -10,6 +10,7 @@ import routeProduction from './api/production/production.route';
 import routePlaylist from './api/playlist/playlist.route';
 import routeSong from './api/song/song.route';
 import routeUser from './api/user/user.route';
+import routeRoom from './api/room/room.route';
 
 import { filterQuery } from './common/query';
 //checkfunction is from admin middleware to check token user admin
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
 
 app.use(`${ENDPOINT}/`, routeAuth);
 app.use(`${ENDPOINT}/admin`, checkToken, admin);
+app.use(`${ENDPOINT}/rooms`, checkTokenForGuest, routeRoom);
 app.use(`${ENDPOINT}/songs`, routeSong);
 app.use(`${ENDPOINT}/users`, checkTokenForGuest, routeUser);
 app.use(`${ENDPOINT}/artists`, routeArtist);

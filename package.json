@@ -21,6 +21,7 @@
     "nodemon": "^1.17.5",
     "randomstring": "^1.1.5",
     "sequelize": "^4.38.0",
+    "socket.io": "^2.1.1",
     "spellchecker": "^3.4.4",
     "string-format": "^2.0.0",
     "string-template": "^1.0.0"

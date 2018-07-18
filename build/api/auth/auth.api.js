@@ -23,9 +23,6 @@ var _jsonStringifySafe2 = _interopRequireDefault(_jsonStringifySafe);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//import randomstring from 'randomstring';
-//import { sendEMail } from '../../common/send-mail';
-
 const { SALT } = process.env;
 
 const registerAuth = exports.registerAuth = async (req, res) => {
