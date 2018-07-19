@@ -12,6 +12,7 @@ app.use((req, res, next) => {
   error.status = 404;
   next(error);
 });
+
 //error handling middleware
 //always at the bottom of the code
 app.use((err, req, res, next) => {

@@ -3,33 +3,24 @@ import RoomUser from '../../models/room-user';
 import path from 'path';
 import { Op } from '../../common/sequelize-connection';
 import User from '../../models/user';
-//import { Op } from '../../common/sequelize-connection';
-
-// export const createRoom = async (data) => {
-//   try{
-//     const
-//     const room = await Room.create(data);
-//     const roomData = {userId: id, roomId: room.id};
-//     const roomUser = await RoomUser.create(roomData);
-//     return room;
-//   } catch(error){
-//     return new Error(error.message);
-//   }
-// };
 
 export const createRoom = async (req, res) => {
   try {
     const { id, updatedBy, createdBy } = req.authUser;
     const { name, friendIds } = req.body;
+
     //check all user's Id
     const users = await User.findAll({
       attributes: ['id'],
       where: { id: { [Op.in]: friendIds }, status: 'active', role: 'guest' }
     });
+
     //if different length ==> not match all user's Id
     if (!(friendIds.length === users.length)) return res.fail('some Id is not found.');
+
     //otherwise => create room and add user
     const room = await createRoomAndUser({ name, updatedBy, createdBy, id, friendIds });
+
     //return room back to user
     return res.success(room);
   } catch (error) {
@@ -42,6 +33,7 @@ export const addUserToRoom = async (req, res) => {
     const { roomId } = req.params;
     const { friendIds } = req.body;
     const { status } = req.query;
+
     //check room is available to add more people
     const [usersRoom, roomUsers, room, users] = await Promise.all([
       RoomUser.findAll({ attributes: ['roomId'], where: { roomId, userId: { [Op.in]: friendIds } } }),
@@ -49,16 +41,22 @@ export const addUserToRoom = async (req, res) => {
       Room.findOne({ attributes: ['id'], where: { id: roomId, status } }),
       User.findAll({ attributes: ['id'], where: { id: { [Op.in]: friendIds }, status: 'active', role: 'guest' } })
     ]);
+
     //if it is not existed
     if (!room) return res.fail('Room Id is invalid.');
+
     //check length => match or not
     if (!(friendIds.length === users.length)) return res.fail('some Id is not found.');
+
     //if friend already in group
     if (usersRoom.length > 0) return res.fail('some Id is already in the room.');
+
     //check if it more than 10 people in a room
     if (roomUsers.length + friendIds.length > 10) return res.fail('Over the limit 10 people per room.');
+
     //if matched => add user into the room
     await addUser({ friendIds, roomId });
+
     return res.success('Successfully added a user to a room.');
   } catch (error) {
     res.fail(error);
@@ -66,11 +64,11 @@ export const addUserToRoom = async (req, res) => {
 };
 
 export const getListUserInRoom = async (req, res) => {
-  try{
+  try {
     const { id } = req.params;
-    const {rows, count} = await RoomUser.findAndCountAll({ attributes: ['userId'], where: { roomId: id } });
-    res.success(rows, {count});
-  } catch(error){
+    const { rows, count } = await RoomUser.findAndCountAll({ attributes: ['userId'], where: { roomId: id } });
+    res.success(rows, { count });
+  } catch (error) {
     res.fail(error);
   }
 };
@@ -130,30 +128,16 @@ export const getRoomChat = async (req, res) => {
 
 export const joinAllChatRoom = async (userId, socket) => {
   try {
-    // const rows = await RoomUser.findAll({
-    //   raw: true,
-    //   attributes: [['roomId', 'id']],
-    //   where: { userId }
-    // });
-    const limit = 20, offset = 0;
+    const limit = 20,
+      offset = 0;
     const { rooms, count } = await findAllRoom({ id: userId, limit, offset });
     socket.join(userId);
     rooms.forEach(room => {
       socket.join(room.id);
     });
+    console.log(count);
     return null;
   } catch (error) {
     return error;
   }
 };
-
-// export const leftChatRoomById = async (roomId, socket) => {
-//   try {
-//     const room = await Room.findById(roomId);
-//     if(!room) return socket.emit('error', 'Wrong room ID');
-//     socket.leave(room.id);
-//     return;
-//   } catch (error) {
-//     return new Error(error.message);
-//   }
-// };

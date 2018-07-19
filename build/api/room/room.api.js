@@ -27,33 +27,23 @@ var _user2 = _interopRequireDefault(_user);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//import { Op } from '../../common/sequelize-connection';
-
-// export const createRoom = async (data) => {
-//   try{
-//     const
-//     const room = await Room.create(data);
-//     const roomData = {userId: id, roomId: room.id};
-//     const roomUser = await RoomUser.create(roomData);
-//     return room;
-//   } catch(error){
-//     return new Error(error.message);
-//   }
-// };
-
 const createRoom = exports.createRoom = async (req, res) => {
   try {
     const { id, updatedBy, createdBy } = req.authUser;
     const { name, friendIds } = req.body;
+
     //check all user's Id
     const users = await _user2.default.findAll({
       attributes: ['id'],
       where: { id: { [_sequelizeConnection.Op.in]: friendIds }, status: 'active', role: 'guest' }
     });
+
     //if different length ==> not match all user's Id
     if (!(friendIds.length === users.length)) return res.fail('some Id is not found.');
+
     //otherwise => create room and add user
     const room = await (0, _room.createRoomAndUser)({ name, updatedBy, createdBy, id, friendIds });
+
     //return room back to user
     return res.success(room);
   } catch (error) {
@@ -66,18 +56,25 @@ const addUserToRoom = exports.addUserToRoom = async (req, res) => {
     const { roomId } = req.params;
     const { friendIds } = req.body;
     const { status } = req.query;
+
     //check room is available to add more people
     const [usersRoom, roomUsers, room, users] = await Promise.all([_roomUser2.default.findAll({ attributes: ['roomId'], where: { roomId, userId: { [_sequelizeConnection.Op.in]: friendIds } } }), _roomUser2.default.findAll({ attributes: ['roomId'], where: { roomId } }), _room2.default.findOne({ attributes: ['id'], where: { id: roomId, status } }), _user2.default.findAll({ attributes: ['id'], where: { id: { [_sequelizeConnection.Op.in]: friendIds }, status: 'active', role: 'guest' } })]);
+
     //if it is not existed
     if (!room) return res.fail('Room Id is invalid.');
+
     //check length => match or not
     if (!(friendIds.length === users.length)) return res.fail('some Id is not found.');
+
     //if friend already in group
     if (usersRoom.length > 0) return res.fail('some Id is already in the room.');
+
     //check if it more than 10 people in a room
     if (roomUsers.length + friendIds.length > 10) return res.fail('Over the limit 10 people per room.');
+
     //if matched => add user into the room
     await (0, _room.addUser)({ friendIds, roomId });
+
     return res.success('Successfully added a user to a room.');
   } catch (error) {
     res.fail(error);
@@ -149,11 +146,6 @@ const getRoomChat = exports.getRoomChat = async (req, res) => {
 
 const joinAllChatRoom = exports.joinAllChatRoom = async (userId, socket) => {
   try {
-    // const rows = await RoomUser.findAll({
-    //   raw: true,
-    //   attributes: [['roomId', 'id']],
-    //   where: { userId }
-    // });
     const limit = 20,
           offset = 0;
     const { rooms, count } = await (0, _room.findAllRoom)({ id: userId, limit, offset });
@@ -161,20 +153,10 @@ const joinAllChatRoom = exports.joinAllChatRoom = async (userId, socket) => {
     rooms.forEach(room => {
       socket.join(room.id);
     });
+    console.log(count);
     return null;
   } catch (error) {
     return error;
   }
 };
-
-// export const leftChatRoomById = async (roomId, socket) => {
-//   try {
-//     const room = await Room.findById(roomId);
-//     if(!room) return socket.emit('error', 'Wrong room ID');
-//     socket.leave(room.id);
-//     return;
-//   } catch (error) {
-//     return new Error(error.message);
-//   }
-// };
 //# sourceMappingURL=room.api.js.map

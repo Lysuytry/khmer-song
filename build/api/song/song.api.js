@@ -59,7 +59,7 @@ const getSongById = exports.getSongById = async (req, res) => {
     const artistAttribute = [['name', 'artistName'], ['image', 'artistImage'], ['type', 'artistType'], ['id', 'artistId']];
     const categoryAttribute = [['name', 'category'], ['id', 'categoryId']];
     const productionAttribute = [['name', 'productionName'], ['logo', 'productionLogo'], ['id', 'productionId']];
-    //if have => cate..Id, album..Id, artist in [artistIds]
+    //if have => categoryId, album..Id, artist in [artistIds]
     const [album, category, artists] = await Promise.all([_album2.default.findOne({ raw: true, attributes: albumAttribute, where: { id: albumId } }), _category2.default.findOne({ raw: true, attributes: categoryAttribute, where: { id: categoryId } }), _artist2.default.findAll({ raw: true, attributes: artistAttribute, where: { id: { [_sequelizeConnection.Op.in]: ids } } })]);
     //get productionId from album => productions
     const production = await _production2.default.findOne({

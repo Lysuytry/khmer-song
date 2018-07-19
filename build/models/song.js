@@ -116,8 +116,10 @@ const getSongArtistCategory = exports.getSongArtistCategory = async data => {
     const filterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
     const filterSingerType = type ? `AND A.type = :singerType` : ``;
     const filterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
-    const preString = (0, _syncFile.readFile)(_path2.default.join(__dirname, '../../src/query/song/getSongArtistCategory.sql'));
-    const preStringCount = (0, _syncFile.readFile)(_path2.default.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql'));
+    // const preString = readFile(path.join(__dirname, '../../src/query/song/get-song-artist-category.sql'));
+    // const preStringCount = readFile(path.join(__dirname, '../../src/query/song/count-all-song-artist-category.sql'));
+    const [preString, preStringCount] = await Promise.all([(0, _syncFile.readFileSyn)(_path2.default.join(__dirname, '../../src/query/song/get-song-artist-category.sql')), (0, _syncFile.readFileSyn)(_path2.default.join(__dirname, '../../src/query/song/count-all-song-artist-category.sql'))]);
+
     const queryString = (0, _stringTemplate2.default)(preString, { filterSingerId, filterSingerName, filterSingerType, filterAlbumId });
     const queryStringCount = (0, _stringTemplate2.default)(preStringCount, {
       filterSingerId,
@@ -141,7 +143,7 @@ const getSongArtistCategory = exports.getSongArtistCategory = async data => {
     })]);
     return _extends({ songs }, count);
   } catch (error) {
-    throw new Error('Error');
+    throw new Error(error);
   }
 };
 

@@ -2,7 +2,7 @@
 import path from 'path';
 import format from 'string-template';
 import { Sequelize, sequelize } from '../common/sequelize-connection';
-import { readFile } from '../common/syncFile';
+import { readFileSyn } from '../common/syncFile';
 // import Album from './album';
 // import Category from './category';
 import ArtistSong from './artist-song';
@@ -101,8 +101,13 @@ export const getSongArtistCategory = async data => {
     const filterSingerName = name ? `AND (A.name LIKE :name OR S.name LIKE :name)` : ``;
     const filterSingerType = type ? `AND A.type = :singerType` : ``;
     const filterAlbumId = albumId ? `AND S.albumId = :albumId` : ``;
-    const preString = readFile(path.join(__dirname, '../../src/query/song/getSongArtistCategory.sql'));
-    const preStringCount = readFile(path.join(__dirname, '../../src/query/song/countAllSongArtistCategory.sql'));
+    // const preString = readFile(path.join(__dirname, '../../src/query/song/get-song-artist-category.sql'));
+    // const preStringCount = readFile(path.join(__dirname, '../../src/query/song/count-all-song-artist-category.sql'));
+    const [preString, preStringCount] = await Promise.all([
+      readFileSyn(path.join(__dirname, '../../src/query/song/get-song-artist-category.sql')),
+      readFileSyn(path.join(__dirname, '../../src/query/song/count-all-song-artist-category.sql'))
+    ]);
+
     const queryString = format(preString, { filterSingerId, filterSingerName, filterSingerType, filterAlbumId });
     const queryStringCount = format(preStringCount, {
       filterSingerId,
@@ -129,7 +134,7 @@ export const getSongArtistCategory = async data => {
     ]);
     return { songs, ...count };
   } catch (error) {
-    throw new Error('Error');
+    throw new Error(error);
   }
 };
 

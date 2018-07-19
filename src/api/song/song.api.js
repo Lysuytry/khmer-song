@@ -38,7 +38,7 @@ export const getSongById = async (req, res) => {
     ];
     const categoryAttribute = [['name', 'category'], ['id', 'categoryId']];
     const productionAttribute = [['name', 'productionName'], ['logo', 'productionLogo'], ['id', 'productionId']];
-    //if have => cate..Id, album..Id, artist in [artistIds]
+    //if have => categoryId, album..Id, artist in [artistIds]
     const [album, category, artists] = await Promise.all([
       Album.findOne({ raw: true, attributes: albumAttribute, where: { id: albumId } }),
       Category.findOne({ raw: true, attributes: categoryAttribute, where: { id: categoryId } }),
