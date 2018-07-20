@@ -14,27 +14,32 @@ import routeRoom from './api/room/room.route';
 
 import { filterQuery } from './common/query';
 //checkfunction is from admin middleware to check token user admin
-import {checkToken, checkTokenForGuest} from './api/admin/admin.middleware';
+import { checkToken, checkTokenForGuest } from './api/admin/admin.middleware';
+import routeDevice from './api/device/device.route';
 
 const app = express();
 
-const {ENDPOINT} = process.env;
+const { ENDPOINT } = process.env;
 
 app.use(logger('dev'));
 app.use(body.json());
-app.use(body.urlencoded({ extended: false}));
+app.use(body.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   //bind query
   filterQuery(req);
   //for response success
   res.success = (data, options, code = 200) => {
-    return typeof data === 'object' ? options ? res.status(code).json({data, options}) : res.status(code).json(data) : res.status(code).json({message: data});
+    return typeof data === 'object'
+      ? options
+        ? res.status(code).json({ data, options })
+        : res.status(code).json(data)
+      : res.status(code).json({ message: data });
   };
   //for response error
   res.fail = (message, code = 500) => {
     console.log(message);
-    return res.status(code).json({message});
+    return res.status(code).json({ message });
   };
   //parse to next
   next();
@@ -46,6 +51,7 @@ app.use(`${ENDPOINT}/rooms`, checkTokenForGuest, routeRoom);
 app.use(`${ENDPOINT}/songs`, routeSong);
 app.use(`${ENDPOINT}/users`, checkTokenForGuest, routeUser);
 app.use(`${ENDPOINT}/artists`, routeArtist);
+app.use(`${ENDPOINT}/devices`, checkTokenForGuest, routeDevice);
 app.use(`${ENDPOINT}/playlist`, checkTokenForGuest, routePlaylist);
 app.use(`${ENDPOINT}/productions`, routeProduction);
 

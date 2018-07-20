@@ -1,5 +1,50 @@
 <!doctype html>
 <html>
+<script src="/__/firebase/5.1.0/firebase-app.js"></script>
+<script src="/__/firebase/5.1.0/firebase-auth.js"></script>
+<script src="/__/firebase/5.1.0/firebase-database.js"></script>
+<script src="/__/firebase/5.1.0/firebase-storage.js"></script>
+<script src="/__/firebase/5.1.0/firebase-messaging.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  // TODO: Replace with your project's customized code snippet
+  var config = {
+    apiKey: "AIzaSyDJa9O9625ZYNw0o-1PbCwFpg3vDkqiWLo",
+    authDomain: "my-message-925b6.firebaseapp.com",
+    databaseURL: "https://my-message-925b6.firebaseio.com",
+    projectId: "my-message-925b6",
+    storageBucket: "my-message-925b6.appspot.com",
+    messagingSenderId: "221832630769"
+  };
+
+  firebase.initializeApp(config);
+
+  const messaging = firebase.messaging();
+  messaging
+    .requestPermission()
+    .then(function () {
+      //MsgElem.innerHTML = "Notification permission granted."
+      console.log("Notification permission granted.");
+
+      // get the token in the form of promise
+      return messaging.getToken()
+    })
+    .then(function (token) {
+      console.log(token);
+      //TokenElem.innerHTML = "token is : " + token
+    })
+    .catch(function (err) {
+      //ErrElem.innerHTML = ErrElem.innerHTML + "; " + err
+      console.log("Unable to get permission to notify.", err);
+    });
+
+  messaging.onMessage(function (payload) {
+    console.log("Message received. ", payload);
+  });
+</script>
+
 
 <head>
   <title>Socket.IO chat</title>
@@ -65,7 +110,7 @@
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
     $(function () {
-      var old ;
+      var old;
       var socket = io('http://localhost:3000/api/v1/chatroom');
       var online = io('http://localhost:3000/api/v1/online');
       //first query
@@ -105,8 +150,8 @@
 
       socket.on('addMessage', function (msg) {
         const { to, from, messages } = msg;
-        if(!old) old = from;
-        if(old !== from) $('#messages').children().remove();
+        if (!old) old = from;
+        if (old !== from) $('#messages').children().remove();
         if (to.length == 36) $('#to').val(to);
         else $('#to').val(from);
         $('#messages').append($('<li>').text('\t\t' + messages));
@@ -193,6 +238,10 @@
 
 <body>
   <div class="row" id="header">
+    <div id="token"></div>
+    <div id="msg"></div>
+    <div id="notis"></div>
+    <div id="err"></div>
     <div class="col-sm-4">
       <h5 id="info" style="float: left; margin: 10px"></h5>
     </div>

@@ -54,11 +54,14 @@ var _query = require('./common/query');
 
 var _admin3 = require('./api/admin/admin.middleware');
 
+var _device = require('./api/device/device.route');
+
+var _device2 = _interopRequireDefault(_device);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const app = (0, _express2.default)();
 //checkfunction is from admin middleware to check token user admin
-
+const app = (0, _express2.default)();
 
 const { ENDPOINT } = process.env;
 
@@ -88,6 +91,7 @@ app.use(`${ENDPOINT}/rooms`, _admin3.checkTokenForGuest, _room2.default);
 app.use(`${ENDPOINT}/songs`, _song2.default);
 app.use(`${ENDPOINT}/users`, _admin3.checkTokenForGuest, _user2.default);
 app.use(`${ENDPOINT}/artists`, _artist2.default);
+app.use(`${ENDPOINT}/devices`, _admin3.checkTokenForGuest, _device2.default);
 app.use(`${ENDPOINT}/playlist`, _admin3.checkTokenForGuest, _playlist2.default);
 app.use(`${ENDPOINT}/productions`, _production2.default);
 
