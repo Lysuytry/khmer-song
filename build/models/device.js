@@ -3,17 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getAllDevices = undefined;
+exports.getRegistrationTokenByUserId = exports.getAllDevices = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _sequelizeConnection = require('../common/sequelize-connection');
 
 const Device = _sequelizeConnection.sequelize.define('devices', {
-  id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, primaryKey: true },
+  id: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, primaryKey: true, autoIncrement: true },
   userId: { type: _sequelizeConnection.Sequelize.INTEGER.UNSIGNED, allowNull: false },
   name: { type: _sequelizeConnection.Sequelize.STRING(100), allowNull: false },
-  registrationToken: { type: _sequelizeConnection.Sequelize.CHAR(36), allowNull: false },
+  registrationToken: { type: _sequelizeConnection.Sequelize.STRING(250), allowNull: false },
   type: { type: _sequelizeConnection.Sequelize.ENUM('android', 'ios', 'web', 'admin', 'window'), allowNull: false },
   subscribed: { type: _sequelizeConnection.Sequelize.ENUM('subscribed', 'unsubscribed'), defaultValue: 'unsubscribed' },
   tags: { type: _sequelizeConnection.Sequelize.TEXT, allowNull: true }
@@ -32,6 +32,19 @@ const getAllDevices = exports.getAllDevices = async data => {
 
     const devices = await Device.findAll(_extends({ raw: true }, filterAttributes, { where: filterWhere, limit, offset }));
 
+    return devices;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getRegistrationTokenByUserId = exports.getRegistrationTokenByUserId = async (userIds, subscribed) => {
+  try {
+    const devices = await Device.findAll({
+      raw: true,
+      attributes: ['registrationToken'],
+      where: { userId: { [_sequelizeConnection.Op.in]: userIds }, subscribed }
+    });
     return devices;
   } catch (error) {
     return error;

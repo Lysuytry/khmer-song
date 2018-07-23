@@ -14,6 +14,7 @@ const routeDevice = (0, _express.Router)();
 
 routeDevice.get('/', _device.getListDevice);
 routeDevice.post('/', _device2.validateDeviceCreating, _device.registerDevice);
+routeDevice.get('/device', _device.getListDeviceByUserId);
 routeDevice.post('/subscribe', _device.subscribeDevice);
 routeDevice.post('/unsubscribe', _device.unsubscribeDevice);
 

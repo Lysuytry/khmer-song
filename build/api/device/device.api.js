@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getListDevice = exports.unsubscribeDevice = exports.subscribeDevice = exports.registerDevice = undefined;
+exports.getDeviceIdByUserId = exports.getListDeviceByUserId = exports.getListDevice = exports.unsubscribeDevice = exports.subscribeDevice = exports.registerDevice = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -26,8 +26,8 @@ const registerDevice = exports.registerDevice = async (req, res) => {
 const subscribeDevice = exports.subscribeDevice = async (req, res) => {
   try {
     const userId = req.authUser.id;
-    const { deviceId } = req.query;
-    await _device2.default.update({ subscribed: 'subscribed' }, { where: { userId, registrationToken: deviceId } });
+    //const { deviceId } = req.params;
+    await _device2.default.update({ subscribed: 'subscribed' }, { where: { userId } });
     res.success('Subscribed for notification.');
   } catch (error) {
     res.fail(error);
@@ -37,8 +37,8 @@ const subscribeDevice = exports.subscribeDevice = async (req, res) => {
 const unsubscribeDevice = exports.unsubscribeDevice = async (req, res) => {
   try {
     const userId = req.authUser.id;
-    const { deviceId } = req.query;
-    await _device2.default.update({ subscribed: 'unsubscribed' }, { where: { userId, registrationToken: deviceId } });
+    //const { deviceId } = req.params;
+    await _device2.default.update({ subscribed: 'unsubscribed' }, { where: { userId } });
     res.success('Unsubscribed for notification.');
   } catch (error) {
     res.fail(error);
@@ -53,6 +53,26 @@ const getListDevice = exports.getListDevice = async (req, res) => {
 
     const data = { userId, type, tags, subscribed, attribute, limit, offset };
     const devices = await (0, _device.getAllDevices)(data);
+    res.success(devices);
+  } catch (error) {
+    res.fail(error);
+  }
+};
+
+const getListDeviceByUserId = exports.getListDeviceByUserId = async (req, res) => {
+  try {
+    const userId = req.authUser.id;
+    const device = await _device2.default.findOne({ where: { userId } });
+    res.success(device);
+  } catch (error) {
+    res.fail(error);
+  }
+};
+
+const getDeviceIdByUserId = exports.getDeviceIdByUserId = async (req, res) => {
+  try {
+    const { userIds } = req.body;
+    const devices = await (0, _device.getRegistrationTokenByUserId)(userIds);
     res.success(devices);
   } catch (error) {
     res.fail(error);
